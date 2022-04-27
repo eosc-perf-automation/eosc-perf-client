@@ -1,0 +1,34 @@
+{
+  "name": "@eosc-perf/eosc-perf-client",
+  "version": "v1-SNAPSHOT.202204271522",
+  "description": "OpenAPI client for @eosc-perf/eosc-perf-client",
+  "author": "OpenAPI-Generator Contributors",
+  "keywords": [
+    "axios",
+    "typescript",
+    "openapi-client",
+    "openapi-generator",
+    "@eosc-perf/eosc-perf-client"
+  ],
+  "license": "Unlicense",
+  "main": "./dist/index.js",
+  "typings": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc --outDir dist/",
+    "prepare": "npm run build"
+  },
+  "dependencies": {
+    "axios": "^0.26.1"
+  },
+  "devDependencies": {
+    "@types/node": "^12.11.5",
+    "typescript": "^3.6.4"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/eosc-perf-automation/eosc-perf-client.git"
+  }
+}
