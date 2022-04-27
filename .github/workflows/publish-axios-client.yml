@@ -1,0 +1,41 @@
+# Run a github basic github action
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      # - name: Cache dependencies
+      #   uses: actions/cache@v3
+      #   env:
+      #     cache-name: cache-yarn
+      #   with:
+      #     path: node_modules
+      #     key: ${{ env.cache-name }}-${{ hashFiles('**/yarn.lock') }}
+      #     restore-keys: |
+      #       ${{ env.cache-name }}-${{ hashFiles('**/yarn.lock') }}
+      #       ${{ env.cache-name }}-
+      - name: Install openapi-generator-cli
+        run: npm install @openapitools/openapi-generator-cli
+
+      - name: Generate api client
+        run: |
+          npx openapi-generator-cli generate -i ./api-spec.json -g typescript-axios -o ./eosc-perf-client --additional-properties=projectName=eosc-perf-client --additional-properties=npmName=@eosc-perf/eosc-perf-client --additional-properties=npmRepository=https://npm.pkg.github.com --additional-properties=snapshot=true
+          ./modify-package-json.py
+
+      - name: Archive artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: eosc-perf-client
+          path: |
+            eosc-perf-client
+
+      - name: Push library to repository
+        run: ../git_push.sh eosc-perf-automation eosc-perf-client "${message}" github.com "${GITHUB_REF_NAME}"
+        working-directory: ./eosc-perf-client
+        env:
+          message: ${{ github.event.head_commit.message }}
+          GIT_TOKEN:  ${{secrets.AUTOMATED_CLIENT_TOKEN}}
