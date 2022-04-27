@@ -1,6 +1,6 @@
 {
   "name": "@eosc-perf/eosc-perf-client",
-  "version": "v1-SNAPSHOT.202204271624",
+  "version": "1.0.0-SNAPSHOT.202204271631",
   "description": "OpenAPI client for @eosc-perf/eosc-perf-client",
   "author": "OpenAPI-Generator Contributors",
   "keywords": [

@@ -1,4 +1,4 @@
-## @eosc-perf/eosc-perf-client@v1-SNAPSHOT.202204271624
+## @eosc-perf/eosc-perf-client@1.0.0-SNAPSHOT.202204271631
 
 This generator creates TypeScript/JavaScript client that utilizes [axios](https://github.com/axios/axios). The generated Node module can be used in the following environments:
 
@@ -36,7 +36,7 @@ navigate to the folder of your consuming project and run one of the following co
 _published:_
 
 ```
-npm install @eosc-perf/eosc-perf-client@v1-SNAPSHOT.202204271624 --save
+npm install @eosc-perf/eosc-perf-client@1.0.0-SNAPSHOT.202204271631 --save
 ```
 
 _unPublished (not recommended):_
