@@ -1,3 +1,5 @@
+name: Generate axios client and push to repo
+
 # Run a github basic github action
 on: [push]
 
