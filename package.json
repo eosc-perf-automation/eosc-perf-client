@@ -1,14 +1,14 @@
 {
-  "name": "@eosc-perf/eosc-perf-client",
-  "version": "1.0.0-SNAPSHOT.202204271631",
-  "description": "OpenAPI client for @eosc-perf/eosc-perf-client",
+  "name": "@eosc-perf-automation/eosc-perf-client",
+  "version": "1.0.0-SNAPSHOT.202204271637",
+  "description": "OpenAPI client for @eosc-perf-automation/eosc-perf-client",
   "author": "OpenAPI-Generator Contributors",
   "keywords": [
     "axios",
     "typescript",
     "openapi-client",
     "openapi-generator",
-    "@eosc-perf/eosc-perf-client"
+    "@eosc-perf-automation/eosc-perf-client"
   ],
   "license": "Unlicense",
   "main": "./dist/index.js",
