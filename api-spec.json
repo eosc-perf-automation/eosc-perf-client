@@ -1,0 +1,4333 @@
+{
+    "security": [
+        {
+            "bearerAuth": []
+        }
+    ],
+    "servers": [
+        {
+            "url": "https://perf.test.fedcloud.eu/",
+            "description": "Development server"
+        },
+        {
+            "url": "https://performance.services.fedcloud.eu/",
+            "description": "Production server"
+        }
+    ],
+    "components": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT"
+            }
+        },
+        "schemas": {
+            "Error": {
+                "type": "object",
+                "properties": {
+                    "status": {
+                        "type": "string",
+                        "description": "Error name"
+                    },
+                    "errors": {
+                        "type": "object",
+                        "description": "Errors"
+                    },
+                    "code": {
+                        "type": "integer",
+                        "description": "Error code"
+                    },
+                    "message": {
+                        "type": "string",
+                        "description": "Error message"
+                    }
+                }
+            },
+            "PaginationMetadata": {
+                "type": "object",
+                "properties": {
+                    "total": {
+                        "type": "integer"
+                    },
+                    "total_pages": {
+                        "type": "integer"
+                    },
+                    "first_page": {
+                        "type": "integer"
+                    },
+                    "last_page": {
+                        "type": "integer"
+                    },
+                    "page": {
+                        "type": "integer"
+                    },
+                    "previous_page": {
+                        "type": "integer"
+                    },
+                    "next_page": {
+                        "type": "integer"
+                    }
+                }
+            },
+            "Benchmark": {
+                "type": "object",
+                "properties": {
+                    "docker_image": {
+                        "type": "string",
+                        "description": "String with a docker hub container name",
+                        "example": "deephdc/deep-oc-benchmarks_cnn"
+                    },
+                    "docker_tag": {
+                        "type": "string",
+                        "description": "String with a docker hub container tag",
+                        "example": "1.0.2-gpu"
+                    },
+                    "json_schema": {
+                        "type": "object",
+                        "example": {
+                            "$id": "https://example.com/benchmark.schema.json",
+                            "$schema": "https://json-schema.org/draft/2019-09/schema",
+                            "type": "object",
+                            "properties": {
+                                "start_datetime": {
+                                    "description": "The benchmark start datetime.",
+                                    "type": "string",
+                                    "format": "date-time"
+                                },
+                                "end_datetime": {
+                                    "description": "The benchmark end datetime.",
+                                    "type": "string",
+                                    "format": "date-time"
+                                },
+                                "machine": {
+                                    "description": "Execution machine details.",
+                                    "type": "object",
+                                    "properties": {
+                                        "cpus": {
+                                            "description": "Number of CPU.",
+                                            "type": "integer"
+                                        },
+                                        "ram": {
+                                            "description": "Available RAM in MB.",
+                                            "type": "integer"
+                                        }
+                                    },
+                                    "required": [
+                                        "cpus",
+                                        "ram"
+                                    ]
+                                }
+                            },
+                            "required": [
+                                "start_datetime",
+                                "end_datetime",
+                                "machine"
+                            ]
+                        }
+                    },
+                    "description": {
+                        "type": "string",
+                        "description": "String with an statement about the object",
+                        "example": "This is a simple description example"
+                    },
+                    "upload_datetime": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true,
+                        "description": "Upload datetime of the referred resource",
+                        "example": "2021-09-08 20:37:10.192459"
+                    },
+                    "id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "readOnly": true,
+                        "description": "UUID resource unique identification",
+                        "example": "dee8f3f8-4e6f-4108-9cdd-6d0c84577a3e"
+                    }
+                },
+                "required": [
+                    "docker_image",
+                    "docker_tag",
+                    "id",
+                    "json_schema",
+                    "upload_datetime"
+                ]
+            },
+            "Benchmarks": {
+                "type": "object",
+                "properties": {
+                    "has_next": {
+                        "type": "boolean",
+                        "readOnly": true,
+                        "description": "True if a next page exists"
+                    },
+                    "has_prev": {
+                        "type": "boolean",
+                        "readOnly": true,
+                        "description": "True if a previous page exists"
+                    },
+                    "next_num": {
+                        "type": "integer",
+                        "readOnly": true,
+                        "description": "Number of the next page"
+                    },
+                    "prev_num": {
+                        "type": "integer",
+                        "readOnly": true,
+                        "description": "Number of the previous page"
+                    },
+                    "pages": {
+                        "type": "integer",
+                        "readOnly": true,
+                        "description": "The total number of pages"
+                    },
+                    "per_page": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 100,
+                        "description": "The number of items to be displayed on a page"
+                    },
+                    "page": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "description": "The return page number (1 indexed)"
+                    },
+                    "total": {
+                        "type": "integer",
+                        "readOnly": true,
+                        "description": "The total number of items matching the query"
+                    },
+                    "items": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Benchmark"
+                        }
+                    }
+                },
+                "required": [
+                    "has_next",
+                    "has_prev",
+                    "items",
+                    "next_num",
+                    "page",
+                    "pages",
+                    "per_page",
+                    "prev_num",
+                    "total"
+                ]
+            },
+            "CreateBenchmark": {
+                "type": "object",
+                "properties": {
+                    "docker_image": {
+                        "type": "string",
+                        "description": "String with a docker hub container name",
+                        "example": "deephdc/deep-oc-benchmarks_cnn"
+                    },
+                    "docker_tag": {
+                        "type": "string",
+                        "description": "String with a docker hub container tag",
+                        "example": "1.0.2-gpu"
+                    },
+                    "json_schema": {
+                        "type": "object",
+                        "example": {
+                            "$id": "https://example.com/benchmark.schema.json",
+                            "$schema": "https://json-schema.org/draft/2019-09/schema",
+                            "type": "object",
+                            "properties": {
+                                "start_datetime": {
+                                    "description": "The benchmark start datetime.",
+                                    "type": "string",
+                                    "format": "date-time"
+                                },
+                                "end_datetime": {
+                                    "description": "The benchmark end datetime.",
+                                    "type": "string",
+                                    "format": "date-time"
+                                },
+                                "machine": {
+                                    "description": "Execution machine details.",
+                                    "type": "object",
+                                    "properties": {
+                                        "cpus": {
+                                            "description": "Number of CPU.",
+                                            "type": "integer"
+                                        },
+                                        "ram": {
+                                            "description": "Available RAM in MB.",
+                                            "type": "integer"
+                                        }
+                                    },
+                                    "required": [
+                                        "cpus",
+                                        "ram"
+                                    ]
+                                }
+                            },
+                            "required": [
+                                "start_datetime",
+                                "end_datetime",
+                                "machine"
+                            ]
+                        }
+                    },
+                    "description": {
+                        "type": "string",
+                        "description": "String with an statement about the object",
+                        "example": "This is a simple description example"
+                    }
+                },
+                "required": [
+                    "docker_image",
+                    "docker_tag",
+                    "json_schema"
+                ]
+            },
+            "User": {
+                "type": "object",
+                "properties": {
+                    "sub": {
+                        "type": "string",
+                        "description": "String containing an OIDC subject",
+                        "example": "NzbLsXh8uDCcd-6MNwXF4W_7noWXFZAfHkxZsRGC9Xs"
+                    },
+                    "iss": {
+                        "type": "string",
+                        "description": "String containing an OIDC issuer",
+                        "example": "https://self-issued.me"
+                    },
+                    "email": {
+                        "type": "string",
+                        "description": "Email of user collected by the OIDC token",
+                        "example": "simple_email@gmail.com"
+                    },
+                    "registration_datetime": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Time when the user was registered",
+                        "example": "2021-09-11 10:16:11.732268"
+                    }
+                },
+                "required": [
+                    "email",
+                    "iss",
+                    "registration_datetime",
+                    "sub"
+                ]
+            },
+            "Submit": {
+                "type": "object",
+                "properties": {
+                    "upload_datetime": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true,
+                        "description": "Upload datetime of the referred resource",
+                        "example": "2021-09-08 20:37:10.192459"
+                    },
+                    "resource_type": {
+                        "type": "string",
+                        "enum": [
+                            "benchmark",
+                            "claim",
+                            "site",
+                            "flavor"
+                        ],
+                        "description": "Resource type discriminator",
+                        "example": "benchmark"
+                    },
+                    "resource_id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "UUID resource unique identification",
+                        "example": "44742c84-448a-401c-9f62-9bcf91706e9f"
+                    },
+                    "uploader": {
+                        "readOnly": true,
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/User"
+                            }
+                        ]
+                    }
+                },
+                "required": [
+                    "resource_id",
+                    "resource_type",
+                    "upload_datetime",
+                    "uploader"
+                ]
+            },
+            "Submits": {
+                "type": "object",
+                "properties": {
+                    "has_next": {
+                        "type": "boolean",
+                        "readOnly": true,
+                        "description": "True if a next page exists"
+                    },
+                    "has_prev": {
+                        "type": "boolean",
+                        "readOnly": true,
+                        "description": "True if a previous page exists"
+                    },
+                    "next_num": {
+                        "type": "integer",
+                        "readOnly": true,
+                        "description": "Number of the next page"
+                    },
+                    "prev_num": {
+                        "type": "integer",
+                        "readOnly": true,
+                        "description": "Number of the previous page"
+                    },
+                    "pages": {
+                        "type": "integer",
+                        "readOnly": true,
+                        "description": "The total number of pages"
+                    },
+                    "per_page": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 100,
+                        "description": "The number of items to be displayed on a page"
+                    },
+                    "page": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "description": "The return page number (1 indexed)"
+                    },
+                    "total": {
+                        "type": "integer",
+                        "readOnly": true,
+                        "description": "The total number of items matching the query"
+                    },
+                    "items": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Submit"
+                        }
+                    }
+                },
+                "required": [
+                    "has_next",
+                    "has_prev",
+                    "items",
+                    "next_num",
+                    "page",
+                    "pages",
+                    "per_page",
+                    "prev_num",
+                    "total"
+                ]
+            },
+            "Claim": {
+                "type": "object",
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "description": "Resource type discriminator",
+                        "example": "The resource uses negative time"
+                    },
+                    "upload_datetime": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true,
+                        "description": "Upload datetime of the referred resource",
+                        "example": "2021-09-08 20:37:10.192459"
+                    },
+                    "id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "readOnly": true,
+                        "description": "UUID resource unique identification",
+                        "example": "dee8f3f8-4e6f-4108-9cdd-6d0c84577a3e"
+                    },
+                    "resource_type": {
+                        "type": "string",
+                        "enum": [
+                            "result"
+                        ],
+                        "description": "Resource type discriminator",
+                        "example": "result"
+                    },
+                    "resource_id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "readOnly": true,
+                        "description": "UUID resource unique identification",
+                        "example": "70a02447-2ff0-43fb-b8ed-8b65ecfd47ff"
+                    },
+                    "uploader": {
+                        "readOnly": true,
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/User"
+                            }
+                        ]
+                    }
+                },
+                "required": [
+                    "id",
+                    "message",
+                    "resource_id",
+                    "resource_type",
+                    "upload_datetime",
+                    "uploader"
+                ]
+            },
+            "Claims": {
+                "type": "object",
+                "properties": {
+                    "has_next": {
+                        "type": "boolean",
+                        "readOnly": true,
+                        "description": "True if a next page exists"
+                    },
+                    "has_prev": {
+                        "type": "boolean",
+                        "readOnly": true,
+                        "description": "True if a previous page exists"
+                    },
+                    "next_num": {
+                        "type": "integer",
+                        "readOnly": true,
+                        "description": "Number of the next page"
+                    },
+                    "prev_num": {
+                        "type": "integer",
+                        "readOnly": true,
+                        "description": "Number of the previous page"
+                    },
+                    "pages": {
+                        "type": "integer",
+                        "readOnly": true,
+                        "description": "The total number of pages"
+                    },
+                    "per_page": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 100,
+                        "description": "The number of items to be displayed on a page"
+                    },
+                    "page": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "description": "The return page number (1 indexed)"
+                    },
+                    "total": {
+                        "type": "integer",
+                        "readOnly": true,
+                        "description": "The total number of items matching the query"
+                    },
+                    "items": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Claim"
+                        }
+                    }
+                },
+                "required": [
+                    "has_next",
+                    "has_prev",
+                    "items",
+                    "next_num",
+                    "page",
+                    "pages",
+                    "per_page",
+                    "prev_num",
+                    "total"
+                ]
+            },
+            "Site": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "description": "String with human readable institution identification",
+                        "example": "Karlsruhe Institute of Technology"
+                    },
+                    "address": {
+                        "type": "string",
+                        "description": "String with place where a site is located",
+                        "example": "76131 Karlsruhe, Germany"
+                    },
+                    "description": {
+                        "type": "string",
+                        "description": "String with an statement about the object",
+                        "example": "This is a simple description example"
+                    },
+                    "upload_datetime": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true,
+                        "description": "Upload datetime of the referred resource",
+                        "example": "2021-09-08 20:37:10.192459"
+                    },
+                    "id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "readOnly": true,
+                        "description": "UUID resource unique identification",
+                        "example": "dee8f3f8-4e6f-4108-9cdd-6d0c84577a3e"
+                    }
+                },
+                "required": [
+                    "address",
+                    "id",
+                    "name",
+                    "upload_datetime"
+                ]
+            },
+            "Flavor": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "description": "String with virtual hardware template identification",
+                        "example": "c6g.medium"
+                    },
+                    "description": {
+                        "type": "string",
+                        "description": "String with an statement about the object",
+                        "example": "This is a simple description example"
+                    },
+                    "upload_datetime": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true,
+                        "description": "Upload datetime of the referred resource",
+                        "example": "2021-09-08 20:37:10.192459"
+                    },
+                    "id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "readOnly": true,
+                        "description": "UUID resource unique identification",
+                        "example": "dee8f3f8-4e6f-4108-9cdd-6d0c84577a3e"
+                    }
+                },
+                "required": [
+                    "id",
+                    "name",
+                    "upload_datetime"
+                ]
+            },
+            "Tag": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "description": "String with short feature identification",
+                        "example": "python"
+                    },
+                    "description": {
+                        "type": "string",
+                        "description": "String with an statement about the object",
+                        "example": "This is a simple description example"
+                    },
+                    "id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "readOnly": true,
+                        "description": "UUID resource unique identification",
+                        "example": "dee8f3f8-4e6f-4108-9cdd-6d0c84577a3e"
+                    }
+                },
+                "required": [
+                    "id",
+                    "name"
+                ]
+            },
+            "Result": {
+                "type": "object",
+                "properties": {
+                    "upload_datetime": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true,
+                        "description": "Upload datetime of the referred resource",
+                        "example": "2021-09-08 20:37:10.192459"
+                    },
+                    "id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "readOnly": true,
+                        "description": "UUID resource unique identification",
+                        "example": "dee8f3f8-4e6f-4108-9cdd-6d0c84577a3e"
+                    },
+                    "execution_datetime": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "START execution datetime of the result",
+                        "example": "2021-09-08 20:37:10.192459"
+                    },
+                    "benchmark": {
+                        "$ref": "#/components/schemas/Benchmark"
+                    },
+                    "site": {
+                        "$ref": "#/components/schemas/Site"
+                    },
+                    "flavor": {
+                        "$ref": "#/components/schemas/Flavor"
+                    },
+                    "tags": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Tag"
+                        }
+                    },
+                    "json": {
+                        "type": "object"
+                    }
+                },
+                "required": [
+                    "benchmark",
+                    "execution_datetime",
+                    "flavor",
+                    "id",
+                    "json",
+                    "site",
+                    "tags",
+                    "upload_datetime"
+                ]
+            },
+            "Results": {
+                "type": "object",
+                "properties": {
+                    "has_next": {
+                        "type": "boolean",
+                        "readOnly": true,
+                        "description": "True if a next page exists"
+                    },
+                    "has_prev": {
+                        "type": "boolean",
+                        "readOnly": true,
+                        "description": "True if a previous page exists"
+                    },
+                    "next_num": {
+                        "type": "integer",
+                        "readOnly": true,
+                        "description": "Number of the next page"
+                    },
+                    "prev_num": {
+                        "type": "integer",
+                        "readOnly": true,
+                        "description": "Number of the previous page"
+                    },
+                    "pages": {
+                        "type": "integer",
+                        "readOnly": true,
+                        "description": "The total number of pages"
+                    },
+                    "per_page": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 100,
+                        "description": "The number of items to be displayed on a page"
+                    },
+                    "page": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "description": "The return page number (1 indexed)"
+                    },
+                    "total": {
+                        "type": "integer",
+                        "readOnly": true,
+                        "description": "The total number of items matching the query"
+                    },
+                    "items": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Result"
+                        }
+                    }
+                },
+                "required": [
+                    "has_next",
+                    "has_prev",
+                    "items",
+                    "next_num",
+                    "page",
+                    "pages",
+                    "per_page",
+                    "prev_num",
+                    "total"
+                ]
+            },
+            "Json": {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": true
+            },
+            "CreateClaim": {
+                "type": "object",
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "description": "Resource type discriminator",
+                        "example": "The resource uses negative time"
+                    }
+                },
+                "required": [
+                    "message"
+                ]
+            },
+            "TagsIds": {
+                "type": "object",
+                "properties": {
+                    "tags_ids": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                }
+            },
+            "Sites": {
+                "type": "object",
+                "properties": {
+                    "has_next": {
+                        "type": "boolean",
+                        "readOnly": true,
+                        "description": "True if a next page exists"
+                    },
+                    "has_prev": {
+                        "type": "boolean",
+                        "readOnly": true,
+                        "description": "True if a previous page exists"
+                    },
+                    "next_num": {
+                        "type": "integer",
+                        "readOnly": true,
+                        "description": "Number of the next page"
+                    },
+                    "prev_num": {
+                        "type": "integer",
+                        "readOnly": true,
+                        "description": "Number of the previous page"
+                    },
+                    "pages": {
+                        "type": "integer",
+                        "readOnly": true,
+                        "description": "The total number of pages"
+                    },
+                    "per_page": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 100,
+                        "description": "The number of items to be displayed on a page"
+                    },
+                    "page": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "description": "The return page number (1 indexed)"
+                    },
+                    "total": {
+                        "type": "integer",
+                        "readOnly": true,
+                        "description": "The total number of items matching the query"
+                    },
+                    "items": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Site"
+                        }
+                    }
+                },
+                "required": [
+                    "has_next",
+                    "has_prev",
+                    "items",
+                    "next_num",
+                    "page",
+                    "pages",
+                    "per_page",
+                    "prev_num",
+                    "total"
+                ]
+            },
+            "CreateSite": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "description": "String with human readable institution identification",
+                        "example": "Karlsruhe Institute of Technology"
+                    },
+                    "address": {
+                        "type": "string",
+                        "description": "String with place where a site is located",
+                        "example": "76131 Karlsruhe, Germany"
+                    },
+                    "description": {
+                        "type": "string",
+                        "description": "String with an statement about the object",
+                        "example": "This is a simple description example"
+                    }
+                },
+                "required": [
+                    "address",
+                    "name"
+                ]
+            },
+            "Flavors": {
+                "type": "object",
+                "properties": {
+                    "has_next": {
+                        "type": "boolean",
+                        "readOnly": true,
+                        "description": "True if a next page exists"
+                    },
+                    "has_prev": {
+                        "type": "boolean",
+                        "readOnly": true,
+                        "description": "True if a previous page exists"
+                    },
+                    "next_num": {
+                        "type": "integer",
+                        "readOnly": true,
+                        "description": "Number of the next page"
+                    },
+                    "prev_num": {
+                        "type": "integer",
+                        "readOnly": true,
+                        "description": "Number of the previous page"
+                    },
+                    "pages": {
+                        "type": "integer",
+                        "readOnly": true,
+                        "description": "The total number of pages"
+                    },
+                    "per_page": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 100,
+                        "description": "The number of items to be displayed on a page"
+                    },
+                    "page": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "description": "The return page number (1 indexed)"
+                    },
+                    "total": {
+                        "type": "integer",
+                        "readOnly": true,
+                        "description": "The total number of items matching the query"
+                    },
+                    "items": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Flavor"
+                        }
+                    }
+                },
+                "required": [
+                    "has_next",
+                    "has_prev",
+                    "items",
+                    "next_num",
+                    "page",
+                    "pages",
+                    "per_page",
+                    "prev_num",
+                    "total"
+                ]
+            },
+            "CreateFlavor": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "description": "String with virtual hardware template identification",
+                        "example": "c6g.medium"
+                    },
+                    "description": {
+                        "type": "string",
+                        "description": "String with an statement about the object",
+                        "example": "This is a simple description example"
+                    }
+                },
+                "required": [
+                    "name"
+                ]
+            },
+            "Tags": {
+                "type": "object",
+                "properties": {
+                    "has_next": {
+                        "type": "boolean",
+                        "readOnly": true,
+                        "description": "True if a next page exists"
+                    },
+                    "has_prev": {
+                        "type": "boolean",
+                        "readOnly": true,
+                        "description": "True if a previous page exists"
+                    },
+                    "next_num": {
+                        "type": "integer",
+                        "readOnly": true,
+                        "description": "Number of the next page"
+                    },
+                    "prev_num": {
+                        "type": "integer",
+                        "readOnly": true,
+                        "description": "Number of the previous page"
+                    },
+                    "pages": {
+                        "type": "integer",
+                        "readOnly": true,
+                        "description": "The total number of pages"
+                    },
+                    "per_page": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 100,
+                        "description": "The number of items to be displayed on a page"
+                    },
+                    "page": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "description": "The return page number (1 indexed)"
+                    },
+                    "total": {
+                        "type": "integer",
+                        "readOnly": true,
+                        "description": "The total number of items matching the query"
+                    },
+                    "items": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Tag"
+                        }
+                    }
+                },
+                "required": [
+                    "has_next",
+                    "has_prev",
+                    "items",
+                    "next_num",
+                    "page",
+                    "pages",
+                    "per_page",
+                    "prev_num",
+                    "total"
+                ]
+            },
+            "CreateTag": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "description": "String with short feature identification",
+                        "example": "python"
+                    },
+                    "description": {
+                        "type": "string",
+                        "description": "String with an statement about the object",
+                        "example": "This is a simple description example"
+                    }
+                },
+                "required": [
+                    "name"
+                ]
+            },
+            "Users": {
+                "type": "object",
+                "properties": {
+                    "has_next": {
+                        "type": "boolean",
+                        "readOnly": true,
+                        "description": "True if a next page exists"
+                    },
+                    "has_prev": {
+                        "type": "boolean",
+                        "readOnly": true,
+                        "description": "True if a previous page exists"
+                    },
+                    "next_num": {
+                        "type": "integer",
+                        "readOnly": true,
+                        "description": "Number of the next page"
+                    },
+                    "prev_num": {
+                        "type": "integer",
+                        "readOnly": true,
+                        "description": "Number of the previous page"
+                    },
+                    "pages": {
+                        "type": "integer",
+                        "readOnly": true,
+                        "description": "The total number of pages"
+                    },
+                    "per_page": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 100,
+                        "description": "The number of items to be displayed on a page"
+                    },
+                    "page": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "description": "The return page number (1 indexed)"
+                    },
+                    "total": {
+                        "type": "integer",
+                        "readOnly": true,
+                        "description": "The total number of items matching the query"
+                    },
+                    "items": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/User"
+                        }
+                    }
+                },
+                "required": [
+                    "has_next",
+                    "has_prev",
+                    "items",
+                    "next_num",
+                    "page",
+                    "pages",
+                    "per_page",
+                    "prev_num",
+                    "total"
+                ]
+            }
+        },
+        "responses": {
+            "UNPROCESSABLE_ENTITY": {
+                "description": "Unprocessable Entity",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/Error"
+                        }
+                    }
+                }
+            },
+            "DEFAULT_ERROR": {
+                "description": "Default error response",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/Error"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "info": {
+        "license": {
+            "name": "MIT",
+            "url": "https://raw.githubusercontent.com/EOSC-synergy/eosc-perf/master/LICENSE"
+        },
+        "title": "Swagger client library generator specs",
+        "version": "v1"
+    },
+    "paths": {
+        "/benchmarks": {
+            "get": {
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "status",
+                        "required": false,
+                        "description": "Resource current state",
+                        "schema": {
+                            "type": "string",
+                            "default": "approved",
+                            "enum": [
+                                "on_review",
+                                "approved"
+                            ]
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "upload_before",
+                        "required": false,
+                        "description": "Results with upload before date (ISO8601)",
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2059-03-10"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "upload_after",
+                        "required": false,
+                        "description": "Results with upload after date (ISO8601)",
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2019-09-07"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "per_page",
+                        "required": false,
+                        "description": "The number of items to be displayed on a page",
+                        "schema": {
+                            "type": "integer",
+                            "default": 100,
+                            "minimum": 1,
+                            "maximum": 100
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "page",
+                        "required": false,
+                        "description": "The return page number (1 indexed)",
+                        "schema": {
+                            "type": "integer",
+                            "default": 1,
+                            "minimum": 1
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "docker_image",
+                        "required": false,
+                        "description": "String with a docker hub container name",
+                        "schema": {
+                            "type": "string",
+                            "example": "deephdc/deep-oc-benchmarks_cnn"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "docker_tag",
+                        "required": false,
+                        "description": "String with a docker hub container tag",
+                        "schema": {
+                            "type": "string",
+                            "example": "1.0.2-gpu"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "sort_by",
+                        "required": false,
+                        "description": "Order to return the results (coma separated).<br>Generic fields: [id,upload_datetime]<br>Specific fields: [docker_image,docker_tag]",
+                        "schema": {
+                            "type": "string",
+                            "default": "+docker_image",
+                            "example": "+docker_image,-docker_tag"
+                        }
+                    }
+                ],
+                "responses": {
+                    "422": {
+                        "$ref": "#/components/responses/UNPROCESSABLE_ENTITY"
+                    },
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Benchmarks"
+                                }
+                            }
+                        }
+                    },
+                    "default": {
+                        "$ref": "#/components/responses/DEFAULT_ERROR"
+                    }
+                },
+                "summary": "(Public) Filters and list benchmarks",
+                "description": "Use this method to get a list of benchmarks filtered according to your\nrequirements. The response returns a pagination object with the\nfiltered benchmarks (if succeeds).",
+                "tags": [
+                    "benchmarks"
+                ],
+                "operationId": "ListBenchmarks"
+            },
+            "post": {
+                "responses": {
+                    "422": {
+                        "$ref": "#/components/responses/UNPROCESSABLE_ENTITY"
+                    },
+                    "201": {
+                        "description": "Created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Benchmark"
+                                }
+                            }
+                        }
+                    },
+                    "default": {
+                        "$ref": "#/components/responses/DEFAULT_ERROR"
+                    }
+                },
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateBenchmark"
+                            }
+                        }
+                    }
+                },
+                "summary": "(Users) Uploads a new benchmark",
+                "description": "Use this method to create a new benchmarks in the database so it can\nbe accessed by the application users. The method returns the complete\ncreated benchmark (if succeeds).\n\nNote: Benchmark use JSON Schemas to implement results validation.",
+                "tags": [
+                    "benchmarks"
+                ],
+                "operationId": "CreateBenchmark"
+            }
+        },
+        "/benchmarks:search": {
+            "get": {
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "terms",
+                        "required": false,
+                        "explode": true,
+                        "style": "form",
+                        "description": "List of terms (string subsets)",
+                        "schema": {
+                            "type": "array",
+                            "default": [],
+                            "example": [
+                                "search_term 1",
+                                "search_term 2"
+                            ],
+                            "items": {
+                                "type": "string",
+                                "description": "Subset expression of a string",
+                                "example": "search_term"
+                            }
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "sort_by",
+                        "required": false,
+                        "description": "Order to return the results (coma separated)",
+                        "schema": {
+                            "type": "string",
+                            "default": "",
+                            "example": "+upload_datetime"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "status",
+                        "required": false,
+                        "description": "Resource current state",
+                        "schema": {
+                            "type": "string",
+                            "default": "approved",
+                            "enum": [
+                                "on_review",
+                                "approved"
+                            ]
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "upload_before",
+                        "required": false,
+                        "description": "Results with upload before date (ISO8601)",
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2059-03-10"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "upload_after",
+                        "required": false,
+                        "description": "Results with upload after date (ISO8601)",
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2019-09-07"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "per_page",
+                        "required": false,
+                        "description": "The number of items to be displayed on a page",
+                        "schema": {
+                            "type": "integer",
+                            "default": 100,
+                            "minimum": 1,
+                            "maximum": 100
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "page",
+                        "required": false,
+                        "description": "The return page number (1 indexed)",
+                        "schema": {
+                            "type": "integer",
+                            "default": 1,
+                            "minimum": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "422": {
+                        "$ref": "#/components/responses/UNPROCESSABLE_ENTITY"
+                    },
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Benchmarks"
+                                }
+                            }
+                        }
+                    },
+                    "default": {
+                        "$ref": "#/components/responses/DEFAULT_ERROR"
+                    }
+                },
+                "summary": "(Public) Filters and list benchmarks",
+                "description": "Use this method to get a list of benchmarks based on a general search\nof terms. For example, calling this method with terms=v1&terms=0\nreturns all benchmarks with 'v1' and '0' on the 'docker_image',\n'docker_tag' or 'description' fields. The response returns a\npagination object with the filtered benchmarks (if succeeds).",
+                "tags": [
+                    "benchmarks"
+                ],
+                "operationId": "SearchBenchmarks"
+            }
+        },
+        "/benchmarks/{id}": {
+            "get": {
+                "parameters": [],
+                "responses": {
+                    "422": {
+                        "$ref": "#/components/responses/UNPROCESSABLE_ENTITY"
+                    },
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Benchmark"
+                                }
+                            }
+                        }
+                    },
+                    "default": {
+                        "$ref": "#/components/responses/DEFAULT_ERROR"
+                    }
+                },
+                "summary": "(Public) Retrieves benchmark details",
+                "description": "Use this method to retrieve a specific benchmark from the database.",
+                "tags": [
+                    "benchmarks"
+                ],
+                "operationId": "GetBenchmark"
+            },
+            "parameters": [
+                {
+                    "in": "path",
+                    "name": "id",
+                    "required": true,
+                    "schema": {
+                        "type": "string",
+                        "format": "uuid"
+                    }
+                }
+            ],
+            "put": {
+                "responses": {
+                    "422": {
+                        "$ref": "#/components/responses/UNPROCESSABLE_ENTITY"
+                    },
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "default": {
+                        "$ref": "#/components/responses/DEFAULT_ERROR"
+                    }
+                },
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Benchmark"
+                            }
+                        }
+                    }
+                },
+                "summary": "(Admins) Implements JSON Put for benchmarks",
+                "description": "Use this method to update a specific benchmark from the database.",
+                "tags": [
+                    "benchmarks"
+                ],
+                "operationId": "UpdateBenchmark"
+            },
+            "delete": {
+                "parameters": [],
+                "responses": {
+                    "422": {
+                        "$ref": "#/components/responses/UNPROCESSABLE_ENTITY"
+                    },
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "default": {
+                        "$ref": "#/components/responses/DEFAULT_ERROR"
+                    }
+                },
+                "summary": "(Admins) Deletes an existing benchmark",
+                "description": "Use this method to delete a specific benchmark from the database.",
+                "tags": [
+                    "benchmarks"
+                ],
+                "operationId": "DeleteBenchmark"
+            }
+        },
+        "/benchmarks/{id}:approve": {
+            "post": {
+                "parameters": [],
+                "responses": {
+                    "422": {
+                        "$ref": "#/components/responses/UNPROCESSABLE_ENTITY"
+                    },
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "default": {
+                        "$ref": "#/components/responses/DEFAULT_ERROR"
+                    }
+                },
+                "summary": "(Admins) Approves a benchmark to include it on default list methods",
+                "description": "Use this method to approve an specific benchmark submitted by an user.\nIt is a custom method, as side effect, it removes the submit report\nassociated as it is no longer needed.",
+                "tags": [
+                    "benchmarks"
+                ],
+                "operationId": "ApproveBenchmark"
+            },
+            "parameters": [
+                {
+                    "in": "path",
+                    "name": "id",
+                    "required": true,
+                    "schema": {
+                        "type": "string",
+                        "format": "uuid"
+                    }
+                }
+            ]
+        },
+        "/benchmarks/{id}:reject": {
+            "post": {
+                "parameters": [],
+                "responses": {
+                    "422": {
+                        "$ref": "#/components/responses/UNPROCESSABLE_ENTITY"
+                    },
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "default": {
+                        "$ref": "#/components/responses/DEFAULT_ERROR"
+                    }
+                },
+                "summary": "(Admins) Rejects a benchmark to safe delete it.",
+                "description": "Use this method instead of DELETE as it raises 422 in case the\nresource was already approved.\nUse this method to reject an specific benchmark submitted by an user.\nIt is a custom method, as side effect, it removes the submit report\nassociated as it is no longer needed.",
+                "tags": [
+                    "benchmarks"
+                ],
+                "operationId": "RejectBenchmark"
+            },
+            "parameters": [
+                {
+                    "in": "path",
+                    "name": "id",
+                    "required": true,
+                    "schema": {
+                        "type": "string",
+                        "format": "uuid"
+                    }
+                }
+            ]
+        },
+        "/reports/submits": {
+            "get": {
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "upload_before",
+                        "required": false,
+                        "description": "Results with upload before date (ISO8601)",
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2059-03-10"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "upload_after",
+                        "required": false,
+                        "description": "Results with upload after date (ISO8601)",
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2019-09-07"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "per_page",
+                        "required": false,
+                        "description": "The number of items to be displayed on a page",
+                        "schema": {
+                            "type": "integer",
+                            "default": 100,
+                            "minimum": 1,
+                            "maximum": 100
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "page",
+                        "required": false,
+                        "description": "The return page number (1 indexed)",
+                        "schema": {
+                            "type": "integer",
+                            "default": 1,
+                            "minimum": 1
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "resource_type",
+                        "required": false,
+                        "description": "Resource type discriminator",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "benchmark",
+                                "claim",
+                                "site",
+                                "flavor"
+                            ],
+                            "example": "benchmark"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "sort_by",
+                        "required": false,
+                        "description": "Order to return the results (coma separated).<br>Generic fields: [id,upload_datetime]<br>Specific fields: [resource_type]",
+                        "schema": {
+                            "type": "string",
+                            "default": "+resource_type",
+                            "example": "+resource_type"
+                        }
+                    }
+                ],
+                "responses": {
+                    "422": {
+                        "$ref": "#/components/responses/UNPROCESSABLE_ENTITY"
+                    },
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Submits"
+                                }
+                            }
+                        }
+                    },
+                    "default": {
+                        "$ref": "#/components/responses/DEFAULT_ERROR"
+                    }
+                },
+                "summary": "(Admins) Filters and list  submits",
+                "description": "Use this method to get a list of submits filtered according to your\nrequirements. The response returns a pagination object with the\nfiltered submits (if succeeds).",
+                "tags": [
+                    "reports"
+                ],
+                "operationId": "ListSubmits"
+            }
+        },
+        "/reports/claims": {
+            "get": {
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "status",
+                        "required": false,
+                        "description": "Resource current state",
+                        "schema": {
+                            "type": "string",
+                            "default": "approved",
+                            "enum": [
+                                "on_review",
+                                "approved"
+                            ]
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "upload_before",
+                        "required": false,
+                        "description": "Results with upload before date (ISO8601)",
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2059-03-10"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "upload_after",
+                        "required": false,
+                        "description": "Results with upload after date (ISO8601)",
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2019-09-07"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "per_page",
+                        "required": false,
+                        "description": "The number of items to be displayed on a page",
+                        "schema": {
+                            "type": "integer",
+                            "default": 100,
+                            "minimum": 1,
+                            "maximum": 100
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "page",
+                        "required": false,
+                        "description": "The return page number (1 indexed)",
+                        "schema": {
+                            "type": "integer",
+                            "default": 1,
+                            "minimum": 1
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "sort_by",
+                        "required": false,
+                        "description": "Order to return the results (coma separated).<br>Generic fields: [id,status,upload_datetime]<br>Specific fields: [resource_type]",
+                        "schema": {
+                            "type": "string",
+                            "default": "+upload_datetime",
+                            "example": "+upload_datetime"
+                        }
+                    }
+                ],
+                "responses": {
+                    "422": {
+                        "$ref": "#/components/responses/UNPROCESSABLE_ENTITY"
+                    },
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Claims"
+                                }
+                            }
+                        }
+                    },
+                    "default": {
+                        "$ref": "#/components/responses/DEFAULT_ERROR"
+                    }
+                },
+                "summary": "(Admins) Filters and lists claims",
+                "description": "Use this method to get a list of claims filtered according to your\nrequirements. The response returns a pagination object with the\nfiltered claims (if succeeds).",
+                "tags": [
+                    "reports"
+                ],
+                "operationId": "ListClaims"
+            }
+        },
+        "/reports/claims/{id}": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Claim"
+                                }
+                            }
+                        }
+                    },
+                    "default": {
+                        "$ref": "#/components/responses/DEFAULT_ERROR"
+                    }
+                },
+                "summary": "(Public) Retrieves claim details",
+                "description": "Use this method to retrieve a specific claim from the database.",
+                "tags": [
+                    "reports"
+                ],
+                "operationId": "GetClaim"
+            },
+            "parameters": [
+                {
+                    "in": "path",
+                    "name": "id",
+                    "required": true,
+                    "schema": {
+                        "type": "string",
+                        "format": "uuid"
+                    }
+                }
+            ]
+        },
+        "/reports/claims/{id}:approve": {
+            "post": {
+                "parameters": [],
+                "responses": {
+                    "422": {
+                        "$ref": "#/components/responses/UNPROCESSABLE_ENTITY"
+                    },
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "default": {
+                        "$ref": "#/components/responses/DEFAULT_ERROR"
+                    }
+                },
+                "summary": "(Admin) Accepts an existing claim",
+                "description": "Use this method to approve an specific resource submitted by an user.\nIt is a custom method, as side effect, it removes the submit report\nassociated as it is no longer needed.",
+                "tags": [
+                    "reports"
+                ],
+                "operationId": "ApproveClaim"
+            },
+            "parameters": [
+                {
+                    "in": "path",
+                    "name": "id",
+                    "required": true,
+                    "schema": {
+                        "type": "string",
+                        "format": "uuid"
+                    }
+                }
+            ]
+        },
+        "/reports/claims/{id}:reject": {
+            "post": {
+                "parameters": [],
+                "responses": {
+                    "422": {
+                        "$ref": "#/components/responses/UNPROCESSABLE_ENTITY"
+                    },
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "default": {
+                        "$ref": "#/components/responses/DEFAULT_ERROR"
+                    }
+                },
+                "summary": "(Admin) Refuses an existing claim",
+                "description": "Use this method to reject an specific resource submitted by an user.\nIt is a custom method, as side effect, it removes the resource and\nthe submit report associated as it is no longer needed.",
+                "tags": [
+                    "reports"
+                ],
+                "operationId": "RejectClaim"
+            },
+            "parameters": [
+                {
+                    "in": "path",
+                    "name": "id",
+                    "required": true,
+                    "schema": {
+                        "type": "string",
+                        "format": "uuid"
+                    }
+                }
+            ]
+        },
+        "/results": {
+            "get": {
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "upload_before",
+                        "required": false,
+                        "description": "Results with upload before date (ISO8601)",
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2059-03-10"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "upload_after",
+                        "required": false,
+                        "description": "Results with upload after date (ISO8601)",
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2019-09-07"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "per_page",
+                        "required": false,
+                        "description": "The number of items to be displayed on a page",
+                        "schema": {
+                            "type": "integer",
+                            "default": 100,
+                            "minimum": 1,
+                            "maximum": 100
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "page",
+                        "required": false,
+                        "description": "The return page number (1 indexed)",
+                        "schema": {
+                            "type": "integer",
+                            "default": 1,
+                            "minimum": 1
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "execution_before",
+                        "required": false,
+                        "description": "Results executed before date (ISO8601)",
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2059-03-10"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "execution_after",
+                        "required": false,
+                        "description": "Results executed after date (ISO8601)",
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2019-09-07"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "benchmark_id",
+                        "required": false,
+                        "description": "UUID benchmark unique identification",
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid",
+                            "example": "f826f0c9-744b-4cd5-8b1c-dbb2a5f22ab1"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "site_id",
+                        "required": false,
+                        "description": "UUID site unique identification",
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid",
+                            "example": "7127ce33-c6ab-4e07-a54a-3ac81a0d0ae0"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "flavor_id",
+                        "required": false,
+                        "description": "UUID flavor unique identification",
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid",
+                            "example": "7ae320d5-7854-4800-b95e-e20d3054a547"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "tags_ids",
+                        "required": false,
+                        "explode": true,
+                        "style": "form",
+                        "description": "UUID tags unique identifications",
+                        "schema": {
+                            "type": "array",
+                            "example": [
+                                "11847252-7009-4877-91e9-b91f09a750c7",
+                                "29acb984-3836-4059-a140-c03404f8f84e"
+                            ],
+                            "items": {
+                                "type": "string",
+                                "format": "uuid",
+                                "description": "UUID tag unique identification",
+                                "example": "dec8d40f-4479-426d-908d-888871054fa6"
+                            }
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "filters",
+                        "required": false,
+                        "explode": true,
+                        "style": "form",
+                        "description": "List of filter conditions (space separated)",
+                        "schema": {
+                            "type": "array",
+                            "default": [],
+                            "example": [
+                                "cpu.count > 4",
+                                "cpu.count < 80"
+                            ],
+                            "items": {
+                                "type": "string",
+                                "description": "JSON filter condition (space sparated)",
+                                "example": "machine.cpu.count > 4"
+                            }
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "sort_by",
+                        "required": false,
+                        "description": "Order to return the results (coma separated).<br>Generic fields: [id,execution_datetime,upload_datetime].<br>Benchmark fields: [benchmark_id,benchmark_name].<br>Site fields: [site_id,site_name,site_address].<br>Flavor fields: [flavor_id,flavor_name].<br>Custom json fields using 'json' and '.' as json field delimiter.",
+                        "schema": {
+                            "type": "string",
+                            "default": "+execution_datetime",
+                            "example": "+execution_datetime"
+                        }
+                    }
+                ],
+                "responses": {
+                    "422": {
+                        "$ref": "#/components/responses/UNPROCESSABLE_ENTITY"
+                    },
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Results"
+                                }
+                            }
+                        }
+                    },
+                    "default": {
+                        "$ref": "#/components/responses/DEFAULT_ERROR"
+                    }
+                },
+                "summary": "(Public) Filters and list results",
+                "description": "Use this method to get a list of results filtered according to your\nrequirements. The response returns a pagination object with the\nfiltered results (if succeeds).\n\nThis method allows to return results filtered by values inside the\nresult. The filter is composed by 3 arguments separated by spaces\n('%20' on URL-encoding): <path.separated.by.dots> <operator> <value>\n\nThere are five filter operators:\n\n - **Equals (==)**: Return results where path value is exact to the\n   query value. For example *filters=cpu.count == 5*\n - **Greater than (>)**: Return results where path value strictly\n   greater than the query value. For example *filters=cpu.count > 5*\n - **Less than (<)**: Return results where path value strictly lower\n   than the query value. For example *filters=cpu.count < 5*\n - **Greater or equal (>=)**: Return results where path value is equal\n   or greater than the query value. For example *filters=cpu.count >= 5*\n - **Less or equal (<=)**: Return results where path value is equal or\n   lower than the query value. For example *filters=cpu.count <= 5*\n\nNote that in the provided examples the filter is not URL-encoded as\nmost libraries do it automatically, however there might be exception.\nIn such cases, use the url encoding guide at:\nhttps://datatracker.ietf.org/doc/html/rfc3986#section-2.1",
+                "tags": [
+                    "results"
+                ],
+                "operationId": "ListResults"
+            },
+            "post": {
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "execution_datetime",
+                        "required": true,
+                        "description": "START execution datetime and timezone of the result",
+                        "schema": {
+                            "type": "string",
+                            "format": "date-time",
+                            "example": "2020-05-21T10:31:00.000+01:00"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "benchmark_id",
+                        "required": true,
+                        "description": "UUID benchmark unique identification",
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid",
+                            "example": "c99c8c03-f830-40fd-bdd8-42a02619d86b"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "flavor_id",
+                        "required": true,
+                        "description": "UUID flavor unique identification",
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid",
+                            "example": "f975e02e-e877-4742-9f39-27ce0ceb76f2"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "tags_ids",
+                        "required": false,
+                        "explode": true,
+                        "style": "form",
+                        "description": "UUID tags unique identifications",
+                        "schema": {
+                            "type": "array",
+                            "default": [],
+                            "example": [
+                                "1905d448-b4e4-481e-9c7a-da8d10fee3e7",
+                                "7f6cf65b-8fe9-4c66-9d58-934c9faf3029"
+                            ],
+                            "items": {
+                                "type": "string",
+                                "format": "uuid",
+                                "description": "UUID tag unique identification",
+                                "example": "f642dfdc-1035-4c9f-b82b-9482ebfec4ba"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "422": {
+                        "$ref": "#/components/responses/UNPROCESSABLE_ENTITY"
+                    },
+                    "201": {
+                        "description": "Created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Result"
+                                }
+                            }
+                        }
+                    },
+                    "default": {
+                        "$ref": "#/components/responses/DEFAULT_ERROR"
+                    }
+                },
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Json"
+                            }
+                        }
+                    }
+                },
+                "summary": "(Users) Uploads a new result",
+                "description": "Use this method to create a new result in the database so it can\nbe accessed by the application users. The method returns the complete\ncreated result (if succeeds).\n\nThe uploaded result must pass the benchmark JSON Schema to be\naccepted, otherwise 422 UnprocessableEntity is produced.\nIn addition, an execution_datetime must be provided in order to indicate\nthe time when the benchmark was executed. It should be in ISO8601\nformat and include the timezone.",
+                "tags": [
+                    "results"
+                ],
+                "operationId": "CreateResult"
+            }
+        },
+        "/results:search": {
+            "get": {
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "terms",
+                        "required": false,
+                        "explode": true,
+                        "style": "form",
+                        "description": "List of terms (string subsets)",
+                        "schema": {
+                            "type": "array",
+                            "default": [],
+                            "example": [
+                                "search_term 1",
+                                "search_term 2"
+                            ],
+                            "items": {
+                                "type": "string",
+                                "description": "Subset expression of a string",
+                                "example": "search_term"
+                            }
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "sort_by",
+                        "required": false,
+                        "description": "Order to return the results (coma separated)",
+                        "schema": {
+                            "type": "string",
+                            "default": "",
+                            "example": "+upload_datetime"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "upload_before",
+                        "required": false,
+                        "description": "Results with upload before date (ISO8601)",
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2059-03-10"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "upload_after",
+                        "required": false,
+                        "description": "Results with upload after date (ISO8601)",
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2019-09-07"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "per_page",
+                        "required": false,
+                        "description": "The number of items to be displayed on a page",
+                        "schema": {
+                            "type": "integer",
+                            "default": 100,
+                            "minimum": 1,
+                            "maximum": 100
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "page",
+                        "required": false,
+                        "description": "The return page number (1 indexed)",
+                        "schema": {
+                            "type": "integer",
+                            "default": 1,
+                            "minimum": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "422": {
+                        "$ref": "#/components/responses/UNPROCESSABLE_ENTITY"
+                    },
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Results"
+                                }
+                            }
+                        }
+                    },
+                    "default": {
+                        "$ref": "#/components/responses/DEFAULT_ERROR"
+                    }
+                },
+                "summary": "(Public) Filters and list results",
+                "description": "Use this method to get a list of results based on a general search\nof terms. For example, calling this method with terms=v1&terms=0\nreturns all results with 'v1' and '0' on the 'docker_image',\n'docker_tag', 'site_name', 'flavor_name' fields or 'tags'.\nThe response returns a pagination object with the filtered results\n(if succeeds).",
+                "tags": [
+                    "results"
+                ],
+                "operationId": "SearchResults"
+            }
+        },
+        "/results/{id}": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Result"
+                                }
+                            }
+                        }
+                    },
+                    "default": {
+                        "$ref": "#/components/responses/DEFAULT_ERROR"
+                    }
+                },
+                "summary": "(Public) Retrieves result details",
+                "description": "Use this method to retrieve a specific result from the database.",
+                "tags": [
+                    "results"
+                ],
+                "operationId": "GetResult"
+            },
+            "parameters": [
+                {
+                    "in": "path",
+                    "name": "id",
+                    "required": true,
+                    "schema": {
+                        "type": "string",
+                        "format": "uuid"
+                    }
+                }
+            ],
+            "delete": {
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "default": {
+                        "$ref": "#/components/responses/DEFAULT_ERROR"
+                    }
+                },
+                "summary": "(Admin) Deletes an existing result",
+                "description": "Use this method to delete a specific result from the database.",
+                "tags": [
+                    "results"
+                ],
+                "operationId": "DeleteResult"
+            }
+        },
+        "/results/{id}:claim": {
+            "post": {
+                "responses": {
+                    "422": {
+                        "$ref": "#/components/responses/UNPROCESSABLE_ENTITY"
+                    },
+                    "201": {
+                        "description": "Created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Claim"
+                                }
+                            }
+                        }
+                    },
+                    "default": {
+                        "$ref": "#/components/responses/DEFAULT_ERROR"
+                    }
+                },
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateClaim"
+                            }
+                        }
+                    }
+                },
+                "summary": "(Users) Reports a result",
+                "description": "Use this method to create a report for a specific result so the\nadministrators are aware of issues. The reported result is hidden\nfrom generic responses until the issue is corrected and approved\nby the administrators.",
+                "tags": [
+                    "results"
+                ],
+                "operationId": "ClaimReport"
+            },
+            "parameters": [
+                {
+                    "in": "path",
+                    "name": "id",
+                    "required": true,
+                    "schema": {
+                        "type": "string",
+                        "format": "uuid"
+                    }
+                }
+            ]
+        },
+        "/results/{id}/tags": {
+            "put": {
+                "responses": {
+                    "422": {
+                        "$ref": "#/components/responses/UNPROCESSABLE_ENTITY"
+                    },
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "default": {
+                        "$ref": "#/components/responses/DEFAULT_ERROR"
+                    }
+                },
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/TagsIds"
+                            }
+                        }
+                    }
+                },
+                "summary": "(Owner or Admin) Updates an existing result tags",
+                "description": "Use this method to update tags on a specific result from the database.",
+                "tags": [
+                    "results"
+                ],
+                "operationId": "UpdateResult"
+            },
+            "parameters": [
+                {
+                    "in": "path",
+                    "name": "id",
+                    "required": true,
+                    "schema": {
+                        "type": "string",
+                        "format": "uuid"
+                    }
+                }
+            ]
+        },
+        "/results/{id}/claims": {
+            "get": {
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "status",
+                        "required": false,
+                        "description": "Resource current state",
+                        "schema": {
+                            "type": "string",
+                            "default": "approved",
+                            "enum": [
+                                "on_review",
+                                "approved"
+                            ]
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "upload_before",
+                        "required": false,
+                        "description": "Results with upload before date (ISO8601)",
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2059-03-10"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "upload_after",
+                        "required": false,
+                        "description": "Results with upload after date (ISO8601)",
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2019-09-07"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "per_page",
+                        "required": false,
+                        "description": "The number of items to be displayed on a page",
+                        "schema": {
+                            "type": "integer",
+                            "default": 100,
+                            "minimum": 1,
+                            "maximum": 100
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "page",
+                        "required": false,
+                        "description": "The return page number (1 indexed)",
+                        "schema": {
+                            "type": "integer",
+                            "default": 1,
+                            "minimum": 1
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "sort_by",
+                        "required": false,
+                        "description": "Order to return the results (coma separated).<br>Generic fields: [id,status,upload_datetime]<br>Specific fields: [resource_type]",
+                        "schema": {
+                            "type": "string",
+                            "default": "+upload_datetime",
+                            "example": "+upload_datetime"
+                        }
+                    }
+                ],
+                "responses": {
+                    "422": {
+                        "$ref": "#/components/responses/UNPROCESSABLE_ENTITY"
+                    },
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Claims"
+                                }
+                            }
+                        }
+                    },
+                    "default": {
+                        "$ref": "#/components/responses/DEFAULT_ERROR"
+                    }
+                },
+                "summary": "(Owner or Admins) Returns the result claims.",
+                "description": "Use this method to retrieve all the result claims.",
+                "tags": [
+                    "results"
+                ],
+                "operationId": "ListResultClaims"
+            },
+            "parameters": [
+                {
+                    "in": "path",
+                    "name": "id",
+                    "required": true,
+                    "schema": {
+                        "type": "string",
+                        "format": "uuid"
+                    }
+                }
+            ]
+        },
+        "/results/{id}/uploader": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/User"
+                                }
+                            }
+                        }
+                    },
+                    "default": {
+                        "$ref": "#/components/responses/DEFAULT_ERROR"
+                    }
+                },
+                "summary": "(Admins) Retrieves result uploader",
+                "description": "Use this method to retrieve the uploader of a specific result\nfrom the database.",
+                "tags": [
+                    "results"
+                ],
+                "operationId": "ResultUploader"
+            },
+            "parameters": [
+                {
+                    "in": "path",
+                    "name": "id",
+                    "required": true,
+                    "schema": {
+                        "type": "string",
+                        "format": "uuid"
+                    }
+                }
+            ]
+        },
+        "/sites": {
+            "get": {
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "status",
+                        "required": false,
+                        "description": "Resource current state",
+                        "schema": {
+                            "type": "string",
+                            "default": "approved",
+                            "enum": [
+                                "on_review",
+                                "approved"
+                            ]
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "upload_before",
+                        "required": false,
+                        "description": "Results with upload before date (ISO8601)",
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2059-03-10"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "upload_after",
+                        "required": false,
+                        "description": "Results with upload after date (ISO8601)",
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2019-09-07"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "per_page",
+                        "required": false,
+                        "description": "The number of items to be displayed on a page",
+                        "schema": {
+                            "type": "integer",
+                            "default": 100,
+                            "minimum": 1,
+                            "maximum": 100
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "page",
+                        "required": false,
+                        "description": "The return page number (1 indexed)",
+                        "schema": {
+                            "type": "integer",
+                            "default": 1,
+                            "minimum": 1
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "name",
+                        "required": false,
+                        "description": "String with human readable institution identification",
+                        "schema": {
+                            "type": "string",
+                            "example": "Karlsruhe Institute of Technology"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "address",
+                        "required": false,
+                        "description": "String with place where a site is located",
+                        "schema": {
+                            "type": "string",
+                            "example": "76131 Karlsruhe, Germany"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "sort_by",
+                        "required": false,
+                        "description": "Order to return the results (coma separated).<br>Generic fields: [id,upload_datetime]<br>Specific fields: [name,address]",
+                        "schema": {
+                            "type": "string",
+                            "default": "+name",
+                            "example": "+name,+address"
+                        }
+                    }
+                ],
+                "responses": {
+                    "422": {
+                        "$ref": "#/components/responses/UNPROCESSABLE_ENTITY"
+                    },
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Sites"
+                                }
+                            }
+                        }
+                    },
+                    "default": {
+                        "$ref": "#/components/responses/DEFAULT_ERROR"
+                    }
+                },
+                "summary": "(Public) Filters and list sites",
+                "description": "Use this method to get a list of sites filtered according to your\nrequirements. The response returns a pagination object with the\nfiltered sites (if succeeds).",
+                "tags": [
+                    "sites"
+                ],
+                "operationId": "ListSites"
+            },
+            "post": {
+                "responses": {
+                    "422": {
+                        "$ref": "#/components/responses/UNPROCESSABLE_ENTITY"
+                    },
+                    "201": {
+                        "description": "Created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Site"
+                                }
+                            }
+                        }
+                    },
+                    "default": {
+                        "$ref": "#/components/responses/DEFAULT_ERROR"
+                    }
+                },
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateSite"
+                            }
+                        }
+                    }
+                },
+                "summary": "(Users) Uploads a new site",
+                "description": "Use this method to create a new site in the database so it can\nbe accessed by the application users. The method returns the complete\ncreated site (if succeeds).",
+                "tags": [
+                    "sites"
+                ],
+                "operationId": "CreateSite"
+            }
+        },
+        "/sites:search": {
+            "get": {
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "terms",
+                        "required": false,
+                        "explode": true,
+                        "style": "form",
+                        "description": "List of terms (string subsets)",
+                        "schema": {
+                            "type": "array",
+                            "default": [],
+                            "example": [
+                                "search_term 1",
+                                "search_term 2"
+                            ],
+                            "items": {
+                                "type": "string",
+                                "description": "Subset expression of a string",
+                                "example": "search_term"
+                            }
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "sort_by",
+                        "required": false,
+                        "description": "Order to return the results (coma separated)",
+                        "schema": {
+                            "type": "string",
+                            "default": "",
+                            "example": "+upload_datetime"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "status",
+                        "required": false,
+                        "description": "Resource current state",
+                        "schema": {
+                            "type": "string",
+                            "default": "approved",
+                            "enum": [
+                                "on_review",
+                                "approved"
+                            ]
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "upload_before",
+                        "required": false,
+                        "description": "Results with upload before date (ISO8601)",
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2059-03-10"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "upload_after",
+                        "required": false,
+                        "description": "Results with upload after date (ISO8601)",
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2019-09-07"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "per_page",
+                        "required": false,
+                        "description": "The number of items to be displayed on a page",
+                        "schema": {
+                            "type": "integer",
+                            "default": 100,
+                            "minimum": 1,
+                            "maximum": 100
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "page",
+                        "required": false,
+                        "description": "The return page number (1 indexed)",
+                        "schema": {
+                            "type": "integer",
+                            "default": 1,
+                            "minimum": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "422": {
+                        "$ref": "#/components/responses/UNPROCESSABLE_ENTITY"
+                    },
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Sites"
+                                }
+                            }
+                        }
+                    },
+                    "default": {
+                        "$ref": "#/components/responses/DEFAULT_ERROR"
+                    }
+                },
+                "summary": "(Public) Filters and list sites",
+                "description": "Use this method to get a list of sites based on a general search\nof terms. For example, calling this method with terms=K&terms=T\nreturns all sites with 'K' and 'T' on the 'name', 'address',\nor 'description' fields. The response returns a pagination object\nwith the filtered sites (if succeeds).",
+                "tags": [
+                    "sites"
+                ],
+                "operationId": "SearchSites"
+            }
+        },
+        "/sites/{id}": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Site"
+                                }
+                            }
+                        }
+                    },
+                    "default": {
+                        "$ref": "#/components/responses/DEFAULT_ERROR"
+                    }
+                },
+                "summary": "(Public) Retrieves site details",
+                "description": "Use this method to retrieve a specific site from the database.",
+                "tags": [
+                    "sites"
+                ],
+                "operationId": "GetSite"
+            },
+            "parameters": [
+                {
+                    "in": "path",
+                    "name": "id",
+                    "required": true,
+                    "schema": {
+                        "type": "string",
+                        "format": "uuid"
+                    }
+                }
+            ],
+            "put": {
+                "responses": {
+                    "422": {
+                        "$ref": "#/components/responses/UNPROCESSABLE_ENTITY"
+                    },
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "default": {
+                        "$ref": "#/components/responses/DEFAULT_ERROR"
+                    }
+                },
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Site"
+                            }
+                        }
+                    }
+                },
+                "summary": "(Admins) Updates an existing site",
+                "description": "Use this method to update a specific site from the database.",
+                "tags": [
+                    "sites"
+                ],
+                "operationId": "UpdateSite"
+            },
+            "delete": {
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "default": {
+                        "$ref": "#/components/responses/DEFAULT_ERROR"
+                    }
+                },
+                "summary": "(Admins) Deletes an existing site",
+                "description": "Use this method to delete a specific site from the database.",
+                "tags": [
+                    "sites"
+                ],
+                "operationId": "DeleteSite"
+            }
+        },
+        "/sites/{id}:approve": {
+            "post": {
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "default": {
+                        "$ref": "#/components/responses/DEFAULT_ERROR"
+                    }
+                },
+                "summary": "(Admins) Approves a site to include it on default list methods",
+                "description": "Use this method to approve an specific site submitted by an user.\nIt is a custom method, as side effect, it removes the submit report\nassociated as it is no longer needed.",
+                "tags": [
+                    "sites"
+                ],
+                "operationId": "ApproveSite"
+            },
+            "parameters": [
+                {
+                    "in": "path",
+                    "name": "id",
+                    "required": true,
+                    "schema": {
+                        "type": "string",
+                        "format": "uuid"
+                    }
+                }
+            ]
+        },
+        "/sites/{id}:reject": {
+            "post": {
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "default": {
+                        "$ref": "#/components/responses/DEFAULT_ERROR"
+                    }
+                },
+                "summary": "(Admins) Rejects a site to safe delete it.",
+                "description": "Use this method instead of DELETE as it raises 422 in case the\nresource was already approved.\n\nUse this method to reject an specific site submitted by an user.\nIt is a custom method, as side effect, it removes the submit report\nassociated as it is no longer needed.",
+                "tags": [
+                    "sites"
+                ],
+                "operationId": "RejectSite"
+            },
+            "parameters": [
+                {
+                    "in": "path",
+                    "name": "id",
+                    "required": true,
+                    "schema": {
+                        "type": "string",
+                        "format": "uuid"
+                    }
+                }
+            ]
+        },
+        "/sites/{id}/flavors": {
+            "get": {
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "status",
+                        "required": false,
+                        "description": "Resource current state",
+                        "schema": {
+                            "type": "string",
+                            "default": "approved",
+                            "enum": [
+                                "on_review",
+                                "approved"
+                            ]
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "upload_before",
+                        "required": false,
+                        "description": "Results with upload before date (ISO8601)",
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2059-03-10"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "upload_after",
+                        "required": false,
+                        "description": "Results with upload after date (ISO8601)",
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2019-09-07"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "per_page",
+                        "required": false,
+                        "description": "The number of items to be displayed on a page",
+                        "schema": {
+                            "type": "integer",
+                            "default": 100,
+                            "minimum": 1,
+                            "maximum": 100
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "page",
+                        "required": false,
+                        "description": "The return page number (1 indexed)",
+                        "schema": {
+                            "type": "integer",
+                            "default": 1,
+                            "minimum": 1
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "name",
+                        "required": false,
+                        "description": "String with virtual hardware template identification",
+                        "schema": {
+                            "type": "string",
+                            "example": "c6g.medium"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "sort_by",
+                        "required": false,
+                        "description": "Order to return the results (coma separated).<br>Generic fields: [id,upload_datetime]<br>Specific fields: [name]",
+                        "schema": {
+                            "type": "string",
+                            "default": "+name",
+                            "example": "+name"
+                        }
+                    }
+                ],
+                "responses": {
+                    "422": {
+                        "$ref": "#/components/responses/UNPROCESSABLE_ENTITY"
+                    },
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Flavors"
+                                }
+                            }
+                        }
+                    },
+                    "default": {
+                        "$ref": "#/components/responses/DEFAULT_ERROR"
+                    }
+                },
+                "summary": "(Public) Filters and list flavors",
+                "description": "Use this method to get a list of flavors filtered according to your\nrequirements. The response returns a pagination object with the\nfiltered flavors (if succeeds).",
+                "tags": [
+                    "sites"
+                ],
+                "operationId": "ListFlavors"
+            },
+            "parameters": [
+                {
+                    "in": "path",
+                    "name": "id",
+                    "required": true,
+                    "schema": {
+                        "type": "string",
+                        "format": "uuid"
+                    }
+                }
+            ],
+            "post": {
+                "responses": {
+                    "422": {
+                        "$ref": "#/components/responses/UNPROCESSABLE_ENTITY"
+                    },
+                    "201": {
+                        "description": "Created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Flavor"
+                                }
+                            }
+                        }
+                    },
+                    "default": {
+                        "$ref": "#/components/responses/DEFAULT_ERROR"
+                    }
+                },
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateFlavor"
+                            }
+                        }
+                    }
+                },
+                "summary": "(Users) Uploads a new flavor",
+                "description": "Use this method to create a new flavors in the database so it can\nbe accessed by the application users. The method returns the complete\ncreated flavor (if succeeds).",
+                "tags": [
+                    "sites"
+                ],
+                "operationId": "AddFlavor"
+            }
+        },
+        "/sites/{id}/flavors:search": {
+            "get": {
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "terms",
+                        "required": false,
+                        "explode": true,
+                        "style": "form",
+                        "description": "List of terms (string subsets)",
+                        "schema": {
+                            "type": "array",
+                            "default": [],
+                            "example": [
+                                "search_term 1",
+                                "search_term 2"
+                            ],
+                            "items": {
+                                "type": "string",
+                                "description": "Subset expression of a string",
+                                "example": "search_term"
+                            }
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "sort_by",
+                        "required": false,
+                        "description": "Order to return the results (coma separated)",
+                        "schema": {
+                            "type": "string",
+                            "default": "",
+                            "example": "+upload_datetime"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "status",
+                        "required": false,
+                        "description": "Resource current state",
+                        "schema": {
+                            "type": "string",
+                            "default": "approved",
+                            "enum": [
+                                "on_review",
+                                "approved"
+                            ]
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "upload_before",
+                        "required": false,
+                        "description": "Results with upload before date (ISO8601)",
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2059-03-10"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "upload_after",
+                        "required": false,
+                        "description": "Results with upload after date (ISO8601)",
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2019-09-07"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "per_page",
+                        "required": false,
+                        "description": "The number of items to be displayed on a page",
+                        "schema": {
+                            "type": "integer",
+                            "default": 100,
+                            "minimum": 1,
+                            "maximum": 100
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "page",
+                        "required": false,
+                        "description": "The return page number (1 indexed)",
+                        "schema": {
+                            "type": "integer",
+                            "default": 1,
+                            "minimum": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "422": {
+                        "$ref": "#/components/responses/UNPROCESSABLE_ENTITY"
+                    },
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Flavors"
+                                }
+                            }
+                        }
+                    },
+                    "default": {
+                        "$ref": "#/components/responses/DEFAULT_ERROR"
+                    }
+                },
+                "summary": "(Public) Filters and list flavors",
+                "description": "Use this method to get a list of flavors based on a general search\nof terms. For example, calling this method with terms=K&terms=T\nreturns all flavors with 'K' and 'T' on the 'name',\nor 'description' fields. The response returns a pagination object\nwith the filtered flavors (if succeeds).",
+                "tags": [
+                    "sites"
+                ],
+                "operationId": "SearchFlavor"
+            },
+            "parameters": [
+                {
+                    "in": "path",
+                    "name": "id",
+                    "required": true,
+                    "schema": {
+                        "type": "string",
+                        "format": "uuid"
+                    }
+                }
+            ]
+        },
+        "/flavors/{id}": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Flavor"
+                                }
+                            }
+                        }
+                    },
+                    "default": {
+                        "$ref": "#/components/responses/DEFAULT_ERROR"
+                    }
+                },
+                "summary": "(Public) Retrieves flavor details",
+                "description": "Use this method to retrieve a specific flavor from the database.",
+                "tags": [
+                    "flavors"
+                ],
+                "operationId": "GetFlavor"
+            },
+            "parameters": [
+                {
+                    "in": "path",
+                    "name": "id",
+                    "required": true,
+                    "schema": {
+                        "type": "string",
+                        "format": "uuid"
+                    }
+                }
+            ],
+            "put": {
+                "responses": {
+                    "422": {
+                        "$ref": "#/components/responses/UNPROCESSABLE_ENTITY"
+                    },
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "default": {
+                        "$ref": "#/components/responses/DEFAULT_ERROR"
+                    }
+                },
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Flavor"
+                            }
+                        }
+                    }
+                },
+                "summary": "(Admins) Updates an existing flavor",
+                "description": "Use this method to update a specific flavor from the database.",
+                "tags": [
+                    "flavors"
+                ],
+                "operationId": "UpdateFlavor"
+            },
+            "delete": {
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "default": {
+                        "$ref": "#/components/responses/DEFAULT_ERROR"
+                    }
+                },
+                "summary": "(Admins) Deletes an existing flavor",
+                "description": "Use this method to delete a specific flavor from the database.",
+                "tags": [
+                    "flavors"
+                ],
+                "operationId": "DeleteFlavor"
+            }
+        },
+        "/flavors/{id}:approve": {
+            "post": {
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "default": {
+                        "$ref": "#/components/responses/DEFAULT_ERROR"
+                    }
+                },
+                "summary": "(Admins) Approves a flavor to include it on default list methods",
+                "description": "Use this method to approve an specific flavor submitted by an user.\nIt is a custom method, as side effect, it removes the submit report\nassociated as it is no longer needed.",
+                "tags": [
+                    "flavors"
+                ],
+                "operationId": "ApproveFlavor"
+            },
+            "parameters": [
+                {
+                    "in": "path",
+                    "name": "id",
+                    "required": true,
+                    "schema": {
+                        "type": "string",
+                        "format": "uuid"
+                    }
+                }
+            ]
+        },
+        "/flavors/{id}:reject": {
+            "post": {
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "default": {
+                        "$ref": "#/components/responses/DEFAULT_ERROR"
+                    }
+                },
+                "summary": "(Admins) Rejects a flavor to safe delete it.",
+                "description": "Use this method instead of DELETE as it raises 422 in case the\nresource was already approved.\n\nUse this method to reject an specific flavor submitted by an user.\nIt is a custom method, as side effect, it removes the submit report\nassociated as it is no longer needed.",
+                "tags": [
+                    "flavors"
+                ],
+                "operationId": "RejectFlavor"
+            },
+            "parameters": [
+                {
+                    "in": "path",
+                    "name": "id",
+                    "required": true,
+                    "schema": {
+                        "type": "string",
+                        "format": "uuid"
+                    }
+                }
+            ]
+        },
+        "/flavors/{id}/site": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Site"
+                                }
+                            }
+                        }
+                    },
+                    "default": {
+                        "$ref": "#/components/responses/DEFAULT_ERROR"
+                    }
+                },
+                "summary": "(Public) Retrieves flavor site details",
+                "description": "Use this method to retrieve the site information from a\nspecific flavor in the database.",
+                "tags": [
+                    "flavors"
+                ],
+                "operationId": "GetFlavorSite"
+            },
+            "parameters": [
+                {
+                    "in": "path",
+                    "name": "id",
+                    "required": true,
+                    "schema": {
+                        "type": "string",
+                        "format": "uuid"
+                    }
+                }
+            ]
+        },
+        "/tags": {
+            "get": {
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "per_page",
+                        "required": false,
+                        "description": "The number of items to be displayed on a page",
+                        "schema": {
+                            "type": "integer",
+                            "default": 100,
+                            "minimum": 1,
+                            "maximum": 100
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "page",
+                        "required": false,
+                        "description": "The return page number (1 indexed)",
+                        "schema": {
+                            "type": "integer",
+                            "default": 1,
+                            "minimum": 1
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "name",
+                        "required": false,
+                        "description": "String with short feature identification",
+                        "schema": {
+                            "type": "string",
+                            "example": "python"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "sort_by",
+                        "required": false,
+                        "description": "Order to return the results (coma separated).<br>Generic fields: [id,upload_datetime]<br>Specific fields: [name]",
+                        "schema": {
+                            "type": "string",
+                            "default": "+name",
+                            "example": "+name"
+                        }
+                    }
+                ],
+                "responses": {
+                    "422": {
+                        "$ref": "#/components/responses/UNPROCESSABLE_ENTITY"
+                    },
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Tags"
+                                }
+                            }
+                        }
+                    },
+                    "default": {
+                        "$ref": "#/components/responses/DEFAULT_ERROR"
+                    }
+                },
+                "summary": "(Public) Filters and list tags",
+                "description": "Use this method to get a list of tags filtered according to your\nrequirements. The response returns a pagination object with the\nfiltered tags (if succeeds).",
+                "tags": [
+                    "tags"
+                ],
+                "operationId": "ListTags"
+            },
+            "post": {
+                "responses": {
+                    "422": {
+                        "$ref": "#/components/responses/UNPROCESSABLE_ENTITY"
+                    },
+                    "201": {
+                        "description": "Created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Tag"
+                                }
+                            }
+                        }
+                    },
+                    "default": {
+                        "$ref": "#/components/responses/DEFAULT_ERROR"
+                    }
+                },
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateTag"
+                            }
+                        }
+                    }
+                },
+                "summary": "(Users) Uploads a new tag",
+                "description": "Use this method to create a new tags in the database so it can\nbe accessed by the application users. The method returns the complete\ncreated tag (if succeeds).",
+                "tags": [
+                    "tags"
+                ],
+                "operationId": "CreateTag"
+            }
+        },
+        "/tags:search": {
+            "get": {
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "terms",
+                        "required": false,
+                        "explode": true,
+                        "style": "form",
+                        "description": "List of terms (string subsets)",
+                        "schema": {
+                            "type": "array",
+                            "default": [],
+                            "example": [
+                                "search_term 1",
+                                "search_term 2"
+                            ],
+                            "items": {
+                                "type": "string",
+                                "description": "Subset expression of a string",
+                                "example": "search_term"
+                            }
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "sort_by",
+                        "required": false,
+                        "description": "Order to return the results (coma separated)",
+                        "schema": {
+                            "type": "string",
+                            "default": "",
+                            "example": "+upload_datetime"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "per_page",
+                        "required": false,
+                        "description": "The number of items to be displayed on a page",
+                        "schema": {
+                            "type": "integer",
+                            "default": 100,
+                            "minimum": 1,
+                            "maximum": 100
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "page",
+                        "required": false,
+                        "description": "The return page number (1 indexed)",
+                        "schema": {
+                            "type": "integer",
+                            "default": 1,
+                            "minimum": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "422": {
+                        "$ref": "#/components/responses/UNPROCESSABLE_ENTITY"
+                    },
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Tags"
+                                }
+                            }
+                        }
+                    },
+                    "default": {
+                        "$ref": "#/components/responses/DEFAULT_ERROR"
+                    }
+                },
+                "summary": "(Public) Filters and list tags",
+                "description": "Use this method to get a list of tags based on a general search\nof terms. For example, calling this method with terms=v1&terms=0\nreturns all tags with 'v1' and '0' on the 'name' or 'description'\nfields. The response returns a pagination object with the filtered\ntags (if succeeds).",
+                "tags": [
+                    "tags"
+                ],
+                "operationId": "SearchTag"
+            }
+        },
+        "/tags/{id}": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Tag"
+                                }
+                            }
+                        }
+                    },
+                    "default": {
+                        "$ref": "#/components/responses/DEFAULT_ERROR"
+                    }
+                },
+                "summary": "(Public) Retrieves tag details",
+                "description": "Use this method to retrieve a specific tag from the database.",
+                "tags": [
+                    "tags"
+                ],
+                "operationId": "GetTag"
+            },
+            "parameters": [
+                {
+                    "in": "path",
+                    "name": "id",
+                    "required": true,
+                    "schema": {
+                        "type": "string",
+                        "format": "uuid"
+                    }
+                }
+            ],
+            "put": {
+                "responses": {
+                    "422": {
+                        "$ref": "#/components/responses/UNPROCESSABLE_ENTITY"
+                    },
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "default": {
+                        "$ref": "#/components/responses/DEFAULT_ERROR"
+                    }
+                },
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Tag"
+                            }
+                        }
+                    }
+                },
+                "summary": "(Admins) Updates an existing tag",
+                "description": "Use this method to update a specific tag from the database.",
+                "tags": [
+                    "tags"
+                ],
+                "operationId": "UpdateTag"
+            },
+            "delete": {
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "default": {
+                        "$ref": "#/components/responses/DEFAULT_ERROR"
+                    }
+                },
+                "summary": "(Admins) Deletes an existing tag",
+                "description": "Use this method to delete a specific tag from the database.",
+                "tags": [
+                    "tags"
+                ],
+                "operationId": "DeleteTag"
+            }
+        },
+        "/users": {
+            "get": {
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "per_page",
+                        "required": false,
+                        "description": "The number of items to be displayed on a page",
+                        "schema": {
+                            "type": "integer",
+                            "default": 100,
+                            "minimum": 1,
+                            "maximum": 100
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "page",
+                        "required": false,
+                        "description": "The return page number (1 indexed)",
+                        "schema": {
+                            "type": "integer",
+                            "default": 1,
+                            "minimum": 1
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "sub",
+                        "required": false,
+                        "description": "String containing an OIDC subject",
+                        "schema": {
+                            "type": "string",
+                            "example": "NzbLsXh8uDCcd-6MNwXF4W_7noWXFZAfHkxZsRGC9Xs"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "iss",
+                        "required": false,
+                        "description": "String containing an OIDC issuer",
+                        "schema": {
+                            "type": "string",
+                            "example": "https://self-issued.me"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "email",
+                        "required": false,
+                        "description": "Email of user collected by the OIDC token",
+                        "schema": {
+                            "type": "string",
+                            "example": "simple_email@gmail.com"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "sort_by",
+                        "required": false,
+                        "description": "Order to return the results (coma separated).<br>Specific fields: [sub,iss,email,registration_datetime]",
+                        "schema": {
+                            "type": "string",
+                            "default": "+iss,+sub",
+                            "example": "+registration_datetime"
+                        }
+                    }
+                ],
+                "responses": {
+                    "422": {
+                        "$ref": "#/components/responses/UNPROCESSABLE_ENTITY"
+                    },
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Users"
+                                }
+                            }
+                        }
+                    },
+                    "default": {
+                        "$ref": "#/components/responses/DEFAULT_ERROR"
+                    }
+                },
+                "summary": "(Admins) Filters and list users",
+                "description": "Use this method to get a list of users filtered according to your\nrequirements. The response returns a pagination object with the\nfiltered users (if succeeds).",
+                "tags": [
+                    "users"
+                ],
+                "operationId": "ListUsers"
+            }
+        },
+        "/users:register": {
+            "post": {
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/User"
+                                }
+                            }
+                        }
+                    },
+                    "default": {
+                        "$ref": "#/components/responses/DEFAULT_ERROR"
+                    }
+                },
+                "summary": "(OIDC Token) Registers the logged in user",
+                "description": "Use this method to register yourself into the application. By using\nthis method, you recognize that you have read and understood our\nterms, conditions and privacy policy at:\n`https://performance.services.fedcloud.eu/privacy_policy`\n\nThe method will return your stored information.",
+                "tags": [
+                    "users"
+                ],
+                "operationId": "RegisterSelf"
+            }
+        },
+        "/users:remove": {
+            "post": {
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "sub",
+                        "required": false,
+                        "description": "String containing an OIDC subject",
+                        "schema": {
+                            "type": "string",
+                            "example": "NzbLsXh8uDCcd-6MNwXF4W_7noWXFZAfHkxZsRGC9Xs"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "iss",
+                        "required": false,
+                        "description": "String containing an OIDC issuer",
+                        "schema": {
+                            "type": "string",
+                            "example": "https://self-issued.me"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "email",
+                        "required": false,
+                        "description": "Email of user collected by the OIDC token",
+                        "schema": {
+                            "type": "string",
+                            "example": "simple_email@gmail.com"
+                        }
+                    }
+                ],
+                "responses": {
+                    "422": {
+                        "$ref": "#/components/responses/UNPROCESSABLE_ENTITY"
+                    },
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "default": {
+                        "$ref": "#/components/responses/DEFAULT_ERROR"
+                    }
+                },
+                "summary": "(Admins) Removes one or multiple users",
+                "description": "Use this method to delete the users filtered according to your\nrequirements. To prevent unintentionally delete all users, the\nmethod requires of query arguments, otherwise UnprocessableEntity\nexception is raised.",
+                "tags": [
+                    "users"
+                ],
+                "operationId": "RemoveUsers"
+            }
+        },
+        "/users:search": {
+            "get": {
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "terms",
+                        "required": false,
+                        "explode": true,
+                        "style": "form",
+                        "description": "List of terms (string subsets)",
+                        "schema": {
+                            "type": "array",
+                            "default": [],
+                            "example": [
+                                "search_term 1",
+                                "search_term 2"
+                            ],
+                            "items": {
+                                "type": "string",
+                                "description": "Subset expression of a string",
+                                "example": "search_term"
+                            }
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "sort_by",
+                        "required": false,
+                        "description": "Order to return the results (coma separated)",
+                        "schema": {
+                            "type": "string",
+                            "default": "",
+                            "example": "+upload_datetime"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "per_page",
+                        "required": false,
+                        "description": "The number of items to be displayed on a page",
+                        "schema": {
+                            "type": "integer",
+                            "default": 100,
+                            "minimum": 1,
+                            "maximum": 100
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "page",
+                        "required": false,
+                        "description": "The return page number (1 indexed)",
+                        "schema": {
+                            "type": "integer",
+                            "default": 1,
+                            "minimum": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "422": {
+                        "$ref": "#/components/responses/UNPROCESSABLE_ENTITY"
+                    },
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Users"
+                                }
+                            }
+                        }
+                    },
+                    "default": {
+                        "$ref": "#/components/responses/DEFAULT_ERROR"
+                    }
+                },
+                "summary": "(Admins) Filters and list users",
+                "description": "Use this method to get a list of users based on a general search\nof terms. For example, calling this method with\nterms=@hotmail&terms=de returns all users with 'hotmail' and 'de'\non the 'email'. The response returns a pagination object with the\nfiltered users (if succeeds).",
+                "tags": [
+                    "users"
+                ],
+                "operationId": "SearchUsers"
+            }
+        },
+        "/users/self": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/User"
+                                }
+                            }
+                        }
+                    },
+                    "default": {
+                        "$ref": "#/components/responses/DEFAULT_ERROR"
+                    }
+                },
+                "summary": "(Users) Retrieves the logged in user info",
+                "description": "Use this method to retrieve your user data stored in the database.",
+                "tags": [
+                    "users"
+                ],
+                "operationId": "GetSelf"
+            }
+        },
+        "/users/self:update": {
+            "post": {
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "default": {
+                        "$ref": "#/components/responses/DEFAULT_ERROR"
+                    }
+                },
+                "summary": "(Users) Updates the logged in user info",
+                "description": "Use this method to update your user data in the database. The method\nreturns by default 204, use a GET method to retrieve the new status\nof your data.",
+                "tags": [
+                    "users"
+                ],
+                "operationId": "UpdateSelf"
+            }
+        },
+        "/users/self:try_admin": {
+            "get": {
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "default": {
+                        "$ref": "#/components/responses/DEFAULT_ERROR"
+                    }
+                },
+                "summary": "(Admins) Returns 204 if you are admin",
+                "description": "Use this method to check that you have the administration rights.\nIf so, the access returns 204, otherwise 401 or 403 are expected.",
+                "tags": [
+                    "users"
+                ],
+                "operationId": "TryAdmin"
+            }
+        },
+        "/users/self/results": {
+            "get": {
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "upload_before",
+                        "required": false,
+                        "description": "Results with upload before date (ISO8601)",
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2059-03-10"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "upload_after",
+                        "required": false,
+                        "description": "Results with upload after date (ISO8601)",
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2019-09-07"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "per_page",
+                        "required": false,
+                        "description": "The number of items to be displayed on a page",
+                        "schema": {
+                            "type": "integer",
+                            "default": 100,
+                            "minimum": 1,
+                            "maximum": 100
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "page",
+                        "required": false,
+                        "description": "The return page number (1 indexed)",
+                        "schema": {
+                            "type": "integer",
+                            "default": 1,
+                            "minimum": 1
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "execution_before",
+                        "required": false,
+                        "description": "Results executed before date (ISO8601)",
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2059-03-10"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "execution_after",
+                        "required": false,
+                        "description": "Results executed after date (ISO8601)",
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2019-09-07"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "benchmark_id",
+                        "required": false,
+                        "description": "UUID benchmark unique identification",
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid",
+                            "example": "f826f0c9-744b-4cd5-8b1c-dbb2a5f22ab1"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "site_id",
+                        "required": false,
+                        "description": "UUID site unique identification",
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid",
+                            "example": "7127ce33-c6ab-4e07-a54a-3ac81a0d0ae0"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "flavor_id",
+                        "required": false,
+                        "description": "UUID flavor unique identification",
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid",
+                            "example": "7ae320d5-7854-4800-b95e-e20d3054a547"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "tags_ids",
+                        "required": false,
+                        "explode": true,
+                        "style": "form",
+                        "description": "UUID tags unique identifications",
+                        "schema": {
+                            "type": "array",
+                            "example": [
+                                "11847252-7009-4877-91e9-b91f09a750c7",
+                                "29acb984-3836-4059-a140-c03404f8f84e"
+                            ],
+                            "items": {
+                                "type": "string",
+                                "format": "uuid",
+                                "description": "UUID tag unique identification",
+                                "example": "dec8d40f-4479-426d-908d-888871054fa6"
+                            }
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "filters",
+                        "required": false,
+                        "explode": true,
+                        "style": "form",
+                        "description": "List of filter conditions (space separated)",
+                        "schema": {
+                            "type": "array",
+                            "default": [],
+                            "example": [
+                                "cpu.count > 4",
+                                "cpu.count < 80"
+                            ],
+                            "items": {
+                                "type": "string",
+                                "description": "JSON filter condition (space sparated)",
+                                "example": "machine.cpu.count > 4"
+                            }
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "sort_by",
+                        "required": false,
+                        "description": "Order to return the results (coma separated).<br>Generic fields: [id,execution_datetime,upload_datetime].<br>Benchmark fields: [benchmark_id,benchmark_name].<br>Site fields: [site_id,site_name,site_address].<br>Flavor fields: [flavor_id,flavor_name].<br>Custom json fields using 'json' and '.' as json field delimiter.",
+                        "schema": {
+                            "type": "string",
+                            "default": "+execution_datetime",
+                            "example": "+execution_datetime"
+                        }
+                    }
+                ],
+                "responses": {
+                    "422": {
+                        "$ref": "#/components/responses/UNPROCESSABLE_ENTITY"
+                    },
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Results"
+                                }
+                            }
+                        }
+                    },
+                    "default": {
+                        "$ref": "#/components/responses/DEFAULT_ERROR"
+                    }
+                },
+                "summary": "(Users) Returns your uploaded results",
+                "description": "Use this method to retrieve all the results uploaded by your user.\nYou can use the query parameter to retrieve also those with pending\nclaims.",
+                "tags": [
+                    "users"
+                ],
+                "operationId": "ListUserResults"
+            }
+        },
+        "/users/self/claims": {
+            "get": {
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "status",
+                        "required": false,
+                        "description": "Resource current state",
+                        "schema": {
+                            "type": "string",
+                            "default": "approved",
+                            "enum": [
+                                "on_review",
+                                "approved"
+                            ]
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "upload_before",
+                        "required": false,
+                        "description": "Results with upload before date (ISO8601)",
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2059-03-10"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "upload_after",
+                        "required": false,
+                        "description": "Results with upload after date (ISO8601)",
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2019-09-07"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "per_page",
+                        "required": false,
+                        "description": "The number of items to be displayed on a page",
+                        "schema": {
+                            "type": "integer",
+                            "default": 100,
+                            "minimum": 1,
+                            "maximum": 100
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "page",
+                        "required": false,
+                        "description": "The return page number (1 indexed)",
+                        "schema": {
+                            "type": "integer",
+                            "default": 1,
+                            "minimum": 1
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "sort_by",
+                        "required": false,
+                        "description": "Order to return the results (coma separated).<br>Generic fields: [id,status,upload_datetime]<br>Specific fields: [resource_type]",
+                        "schema": {
+                            "type": "string",
+                            "default": "+upload_datetime",
+                            "example": "+upload_datetime"
+                        }
+                    }
+                ],
+                "responses": {
+                    "422": {
+                        "$ref": "#/components/responses/UNPROCESSABLE_ENTITY"
+                    },
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Claims"
+                                }
+                            }
+                        }
+                    },
+                    "default": {
+                        "$ref": "#/components/responses/DEFAULT_ERROR"
+                    }
+                },
+                "summary": "(Users) Returns your uploaded pending claims",
+                "description": "Use this method to retrieve all the claims uploaded by your user.",
+                "tags": [
+                    "users"
+                ],
+                "operationId": "ListUserClaims"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "benchmarks",
+            "description": "Operations on benchmarks"
+        },
+        {
+            "name": "reports",
+            "description": "Operations on reports"
+        },
+        {
+            "name": "results",
+            "description": "Operations on results"
+        },
+        {
+            "name": "sites",
+            "description": "Operations on sites"
+        },
+        {
+            "name": "flavors",
+            "description": "Operations on flavors"
+        },
+        {
+            "name": "tags",
+            "description": "Operations on tags"
+        },
+        {
+            "name": "users",
+            "description": "Operations on users"
+        }
+    ],
+    "openapi": "3.0.2"
+}
