@@ -442,17 +442,11 @@ export interface Flavors {
  */
 export interface ModelError {
     /**
-     * Error code
-     * @type {number}
+     * Errors
+     * @type {object}
      * @memberof ModelError
      */
-    'code'?: number;
-    /**
-     * Error message
-     * @type {string}
-     * @memberof ModelError
-     */
-    'message'?: string;
+    'errors'?: object;
     /**
      * Error name
      * @type {string}
@@ -460,11 +454,17 @@ export interface ModelError {
      */
     'status'?: string;
     /**
-     * Errors
-     * @type {object}
+     * Error message
+     * @type {string}
      * @memberof ModelError
      */
-    'errors'?: object;
+    'message'?: string;
+    /**
+     * Error code
+     * @type {number}
+     * @memberof ModelError
+     */
+    'code'?: number;
 }
 /**
  * 
@@ -1032,15 +1032,15 @@ export const BenchmarksApiAxiosParamCreator = function (configuration?: Configur
         /**
          * Use this method to approve an specific benchmark submitted by an user. It is a custom method, as side effect, it removes the submit report associated as it is no longer needed.
          * @summary (Admins) Approves a benchmark to include it on default list methods
-         * @param {string} id 
+         * @param {string} benchmarkId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        approveBenchmark: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'id' is not null or undefined
-            assertParamExists('approveBenchmark', 'id', id)
-            const localVarPath = `/benchmarks/{id}:approve`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+        approveBenchmark: async (benchmarkId: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'benchmarkId' is not null or undefined
+            assertParamExists('approveBenchmark', 'benchmarkId', benchmarkId)
+            const localVarPath = `/benchmarks/{benchmark_id}:approve`
+                .replace(`{${"benchmark_id"}}`, encodeURIComponent(String(benchmarkId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -1110,15 +1110,15 @@ export const BenchmarksApiAxiosParamCreator = function (configuration?: Configur
         /**
          * Use this method to delete a specific benchmark from the database.
          * @summary (Admins) Deletes an existing benchmark
-         * @param {string} id 
+         * @param {string} benchmarkId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        deleteBenchmark: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'id' is not null or undefined
-            assertParamExists('deleteBenchmark', 'id', id)
-            const localVarPath = `/benchmarks/{id}`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+        deleteBenchmark: async (benchmarkId: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'benchmarkId' is not null or undefined
+            assertParamExists('deleteBenchmark', 'benchmarkId', benchmarkId)
+            const localVarPath = `/benchmarks/{benchmark_id}`
+                .replace(`{${"benchmark_id"}}`, encodeURIComponent(String(benchmarkId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -1148,15 +1148,15 @@ export const BenchmarksApiAxiosParamCreator = function (configuration?: Configur
         /**
          * Use this method to retrieve a specific benchmark from the database.
          * @summary (Public) Retrieves benchmark details
-         * @param {string} id 
+         * @param {string} benchmarkId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getBenchmark: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'id' is not null or undefined
-            assertParamExists('getBenchmark', 'id', id)
-            const localVarPath = `/benchmarks/{id}`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+        getBenchmark: async (benchmarkId: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'benchmarkId' is not null or undefined
+            assertParamExists('getBenchmark', 'benchmarkId', benchmarkId)
+            const localVarPath = `/benchmarks/{benchmark_id}`
+                .replace(`{${"benchmark_id"}}`, encodeURIComponent(String(benchmarkId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -1264,15 +1264,15 @@ export const BenchmarksApiAxiosParamCreator = function (configuration?: Configur
         /**
          * Use this method instead of DELETE as it raises 422 in case the resource was already approved. Use this method to reject an specific benchmark submitted by an user. It is a custom method, as side effect, it removes the submit report associated as it is no longer needed.
          * @summary (Admins) Rejects a benchmark to safe delete it.
-         * @param {string} id 
+         * @param {string} benchmarkId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        rejectBenchmark: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'id' is not null or undefined
-            assertParamExists('rejectBenchmark', 'id', id)
-            const localVarPath = `/benchmarks/{id}:reject`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+        rejectBenchmark: async (benchmarkId: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'benchmarkId' is not null or undefined
+            assertParamExists('rejectBenchmark', 'benchmarkId', benchmarkId)
+            const localVarPath = `/benchmarks/{benchmark_id}:reject`
+                .replace(`{${"benchmark_id"}}`, encodeURIComponent(String(benchmarkId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -1375,18 +1375,18 @@ export const BenchmarksApiAxiosParamCreator = function (configuration?: Configur
         /**
          * Use this method to update a specific benchmark from the database.
          * @summary (Admins) Implements JSON Put for benchmarks
-         * @param {string} id 
+         * @param {string} benchmarkId 
          * @param {Benchmark} benchmark 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        updateBenchmark: async (id: string, benchmark: Benchmark, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'id' is not null or undefined
-            assertParamExists('updateBenchmark', 'id', id)
+        updateBenchmark: async (benchmarkId: string, benchmark: Benchmark, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'benchmarkId' is not null or undefined
+            assertParamExists('updateBenchmark', 'benchmarkId', benchmarkId)
             // verify required parameter 'benchmark' is not null or undefined
             assertParamExists('updateBenchmark', 'benchmark', benchmark)
-            const localVarPath = `/benchmarks/{id}`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            const localVarPath = `/benchmarks/{benchmark_id}`
+                .replace(`{${"benchmark_id"}}`, encodeURIComponent(String(benchmarkId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -1429,12 +1429,12 @@ export const BenchmarksApiFp = function(configuration?: Configuration) {
         /**
          * Use this method to approve an specific benchmark submitted by an user. It is a custom method, as side effect, it removes the submit report associated as it is no longer needed.
          * @summary (Admins) Approves a benchmark to include it on default list methods
-         * @param {string} id 
+         * @param {string} benchmarkId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async approveBenchmark(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.approveBenchmark(id, options);
+        async approveBenchmark(benchmarkId: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.approveBenchmark(benchmarkId, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -1451,23 +1451,23 @@ export const BenchmarksApiFp = function(configuration?: Configuration) {
         /**
          * Use this method to delete a specific benchmark from the database.
          * @summary (Admins) Deletes an existing benchmark
-         * @param {string} id 
+         * @param {string} benchmarkId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async deleteBenchmark(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.deleteBenchmark(id, options);
+        async deleteBenchmark(benchmarkId: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.deleteBenchmark(benchmarkId, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * Use this method to retrieve a specific benchmark from the database.
          * @summary (Public) Retrieves benchmark details
-         * @param {string} id 
+         * @param {string} benchmarkId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getBenchmark(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Benchmark>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getBenchmark(id, options);
+        async getBenchmark(benchmarkId: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Benchmark>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getBenchmark(benchmarkId, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -1491,12 +1491,12 @@ export const BenchmarksApiFp = function(configuration?: Configuration) {
         /**
          * Use this method instead of DELETE as it raises 422 in case the resource was already approved. Use this method to reject an specific benchmark submitted by an user. It is a custom method, as side effect, it removes the submit report associated as it is no longer needed.
          * @summary (Admins) Rejects a benchmark to safe delete it.
-         * @param {string} id 
+         * @param {string} benchmarkId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async rejectBenchmark(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.rejectBenchmark(id, options);
+        async rejectBenchmark(benchmarkId: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.rejectBenchmark(benchmarkId, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -1519,13 +1519,13 @@ export const BenchmarksApiFp = function(configuration?: Configuration) {
         /**
          * Use this method to update a specific benchmark from the database.
          * @summary (Admins) Implements JSON Put for benchmarks
-         * @param {string} id 
+         * @param {string} benchmarkId 
          * @param {Benchmark} benchmark 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async updateBenchmark(id: string, benchmark: Benchmark, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.updateBenchmark(id, benchmark, options);
+        async updateBenchmark(benchmarkId: string, benchmark: Benchmark, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.updateBenchmark(benchmarkId, benchmark, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
     }
@@ -1541,12 +1541,12 @@ export const BenchmarksApiFactory = function (configuration?: Configuration, bas
         /**
          * Use this method to approve an specific benchmark submitted by an user. It is a custom method, as side effect, it removes the submit report associated as it is no longer needed.
          * @summary (Admins) Approves a benchmark to include it on default list methods
-         * @param {string} id 
+         * @param {string} benchmarkId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        approveBenchmark(id: string, options?: any): AxiosPromise<void> {
-            return localVarFp.approveBenchmark(id, options).then((request) => request(axios, basePath));
+        approveBenchmark(benchmarkId: string, options?: any): AxiosPromise<void> {
+            return localVarFp.approveBenchmark(benchmarkId, options).then((request) => request(axios, basePath));
         },
         /**
          * Use this method to create a new benchmarks in the database so it can be accessed by the application users. The method returns the complete created benchmark (if succeeds).  Note: Benchmark use JSON Schemas to implement results validation.
@@ -1561,22 +1561,22 @@ export const BenchmarksApiFactory = function (configuration?: Configuration, bas
         /**
          * Use this method to delete a specific benchmark from the database.
          * @summary (Admins) Deletes an existing benchmark
-         * @param {string} id 
+         * @param {string} benchmarkId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        deleteBenchmark(id: string, options?: any): AxiosPromise<void> {
-            return localVarFp.deleteBenchmark(id, options).then((request) => request(axios, basePath));
+        deleteBenchmark(benchmarkId: string, options?: any): AxiosPromise<void> {
+            return localVarFp.deleteBenchmark(benchmarkId, options).then((request) => request(axios, basePath));
         },
         /**
          * Use this method to retrieve a specific benchmark from the database.
          * @summary (Public) Retrieves benchmark details
-         * @param {string} id 
+         * @param {string} benchmarkId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getBenchmark(id: string, options?: any): AxiosPromise<Benchmark> {
-            return localVarFp.getBenchmark(id, options).then((request) => request(axios, basePath));
+        getBenchmark(benchmarkId: string, options?: any): AxiosPromise<Benchmark> {
+            return localVarFp.getBenchmark(benchmarkId, options).then((request) => request(axios, basePath));
         },
         /**
          * Use this method to get a list of benchmarks filtered according to your requirements. The response returns a pagination object with the filtered benchmarks (if succeeds).
@@ -1598,12 +1598,12 @@ export const BenchmarksApiFactory = function (configuration?: Configuration, bas
         /**
          * Use this method instead of DELETE as it raises 422 in case the resource was already approved. Use this method to reject an specific benchmark submitted by an user. It is a custom method, as side effect, it removes the submit report associated as it is no longer needed.
          * @summary (Admins) Rejects a benchmark to safe delete it.
-         * @param {string} id 
+         * @param {string} benchmarkId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        rejectBenchmark(id: string, options?: any): AxiosPromise<void> {
-            return localVarFp.rejectBenchmark(id, options).then((request) => request(axios, basePath));
+        rejectBenchmark(benchmarkId: string, options?: any): AxiosPromise<void> {
+            return localVarFp.rejectBenchmark(benchmarkId, options).then((request) => request(axios, basePath));
         },
         /**
          * Use this method to get a list of benchmarks based on a general search of terms. For example, calling this method with terms=v1&terms=0 returns all benchmarks with \'v1\' and \'0\' on the \'docker_image\', \'docker_tag\' or \'description\' fields. The response returns a pagination object with the filtered benchmarks (if succeeds).
@@ -1624,13 +1624,13 @@ export const BenchmarksApiFactory = function (configuration?: Configuration, bas
         /**
          * Use this method to update a specific benchmark from the database.
          * @summary (Admins) Implements JSON Put for benchmarks
-         * @param {string} id 
+         * @param {string} benchmarkId 
          * @param {Benchmark} benchmark 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        updateBenchmark(id: string, benchmark: Benchmark, options?: any): AxiosPromise<void> {
-            return localVarFp.updateBenchmark(id, benchmark, options).then((request) => request(axios, basePath));
+        updateBenchmark(benchmarkId: string, benchmark: Benchmark, options?: any): AxiosPromise<void> {
+            return localVarFp.updateBenchmark(benchmarkId, benchmark, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -1645,13 +1645,13 @@ export class BenchmarksApi extends BaseAPI {
     /**
      * Use this method to approve an specific benchmark submitted by an user. It is a custom method, as side effect, it removes the submit report associated as it is no longer needed.
      * @summary (Admins) Approves a benchmark to include it on default list methods
-     * @param {string} id 
+     * @param {string} benchmarkId 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof BenchmarksApi
      */
-    public approveBenchmark(id: string, options?: AxiosRequestConfig) {
-        return BenchmarksApiFp(this.configuration).approveBenchmark(id, options).then((request) => request(this.axios, this.basePath));
+    public approveBenchmark(benchmarkId: string, options?: AxiosRequestConfig) {
+        return BenchmarksApiFp(this.configuration).approveBenchmark(benchmarkId, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -1669,25 +1669,25 @@ export class BenchmarksApi extends BaseAPI {
     /**
      * Use this method to delete a specific benchmark from the database.
      * @summary (Admins) Deletes an existing benchmark
-     * @param {string} id 
+     * @param {string} benchmarkId 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof BenchmarksApi
      */
-    public deleteBenchmark(id: string, options?: AxiosRequestConfig) {
-        return BenchmarksApiFp(this.configuration).deleteBenchmark(id, options).then((request) => request(this.axios, this.basePath));
+    public deleteBenchmark(benchmarkId: string, options?: AxiosRequestConfig) {
+        return BenchmarksApiFp(this.configuration).deleteBenchmark(benchmarkId, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * Use this method to retrieve a specific benchmark from the database.
      * @summary (Public) Retrieves benchmark details
-     * @param {string} id 
+     * @param {string} benchmarkId 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof BenchmarksApi
      */
-    public getBenchmark(id: string, options?: AxiosRequestConfig) {
-        return BenchmarksApiFp(this.configuration).getBenchmark(id, options).then((request) => request(this.axios, this.basePath));
+    public getBenchmark(benchmarkId: string, options?: AxiosRequestConfig) {
+        return BenchmarksApiFp(this.configuration).getBenchmark(benchmarkId, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -1712,13 +1712,13 @@ export class BenchmarksApi extends BaseAPI {
     /**
      * Use this method instead of DELETE as it raises 422 in case the resource was already approved. Use this method to reject an specific benchmark submitted by an user. It is a custom method, as side effect, it removes the submit report associated as it is no longer needed.
      * @summary (Admins) Rejects a benchmark to safe delete it.
-     * @param {string} id 
+     * @param {string} benchmarkId 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof BenchmarksApi
      */
-    public rejectBenchmark(id: string, options?: AxiosRequestConfig) {
-        return BenchmarksApiFp(this.configuration).rejectBenchmark(id, options).then((request) => request(this.axios, this.basePath));
+    public rejectBenchmark(benchmarkId: string, options?: AxiosRequestConfig) {
+        return BenchmarksApiFp(this.configuration).rejectBenchmark(benchmarkId, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -1742,14 +1742,14 @@ export class BenchmarksApi extends BaseAPI {
     /**
      * Use this method to update a specific benchmark from the database.
      * @summary (Admins) Implements JSON Put for benchmarks
-     * @param {string} id 
+     * @param {string} benchmarkId 
      * @param {Benchmark} benchmark 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof BenchmarksApi
      */
-    public updateBenchmark(id: string, benchmark: Benchmark, options?: AxiosRequestConfig) {
-        return BenchmarksApiFp(this.configuration).updateBenchmark(id, benchmark, options).then((request) => request(this.axios, this.basePath));
+    public updateBenchmark(benchmarkId: string, benchmark: Benchmark, options?: AxiosRequestConfig) {
+        return BenchmarksApiFp(this.configuration).updateBenchmark(benchmarkId, benchmark, options).then((request) => request(this.axios, this.basePath));
     }
 }
 
@@ -1763,15 +1763,15 @@ export const FlavorsApiAxiosParamCreator = function (configuration?: Configurati
         /**
          * Use this method to approve an specific flavor submitted by an user. It is a custom method, as side effect, it removes the submit report associated as it is no longer needed.
          * @summary (Admins) Approves a flavor to include it on default list methods
-         * @param {string} id 
+         * @param {string} flavorId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        approveFlavor: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'id' is not null or undefined
-            assertParamExists('approveFlavor', 'id', id)
-            const localVarPath = `/flavors/{id}:approve`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+        approveFlavor: async (flavorId: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'flavorId' is not null or undefined
+            assertParamExists('approveFlavor', 'flavorId', flavorId)
+            const localVarPath = `/flavors/{flavor_id}:approve`
+                .replace(`{${"flavor_id"}}`, encodeURIComponent(String(flavorId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -1801,15 +1801,15 @@ export const FlavorsApiAxiosParamCreator = function (configuration?: Configurati
         /**
          * Use this method to delete a specific flavor from the database.
          * @summary (Admins) Deletes an existing flavor
-         * @param {string} id 
+         * @param {string} flavorId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        deleteFlavor: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'id' is not null or undefined
-            assertParamExists('deleteFlavor', 'id', id)
-            const localVarPath = `/flavors/{id}`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+        deleteFlavor: async (flavorId: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'flavorId' is not null or undefined
+            assertParamExists('deleteFlavor', 'flavorId', flavorId)
+            const localVarPath = `/flavors/{flavor_id}`
+                .replace(`{${"flavor_id"}}`, encodeURIComponent(String(flavorId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -1839,15 +1839,15 @@ export const FlavorsApiAxiosParamCreator = function (configuration?: Configurati
         /**
          * Use this method to retrieve a specific flavor from the database.
          * @summary (Public) Retrieves flavor details
-         * @param {string} id 
+         * @param {string} flavorId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getFlavor: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'id' is not null or undefined
-            assertParamExists('getFlavor', 'id', id)
-            const localVarPath = `/flavors/{id}`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+        getFlavor: async (flavorId: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'flavorId' is not null or undefined
+            assertParamExists('getFlavor', 'flavorId', flavorId)
+            const localVarPath = `/flavors/{flavor_id}`
+                .replace(`{${"flavor_id"}}`, encodeURIComponent(String(flavorId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -1877,15 +1877,15 @@ export const FlavorsApiAxiosParamCreator = function (configuration?: Configurati
         /**
          * Use this method to retrieve the site information from a specific flavor in the database.
          * @summary (Public) Retrieves flavor site details
-         * @param {string} id 
+         * @param {string} flavorId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getFlavorSite: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'id' is not null or undefined
-            assertParamExists('getFlavorSite', 'id', id)
-            const localVarPath = `/flavors/{id}/site`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+        getFlavorSite: async (flavorId: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'flavorId' is not null or undefined
+            assertParamExists('getFlavorSite', 'flavorId', flavorId)
+            const localVarPath = `/flavors/{flavor_id}/site`
+                .replace(`{${"flavor_id"}}`, encodeURIComponent(String(flavorId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -1915,15 +1915,15 @@ export const FlavorsApiAxiosParamCreator = function (configuration?: Configurati
         /**
          * Use this method instead of DELETE as it raises 422 in case the resource was already approved.  Use this method to reject an specific flavor submitted by an user. It is a custom method, as side effect, it removes the submit report associated as it is no longer needed.
          * @summary (Admins) Rejects a flavor to safe delete it.
-         * @param {string} id 
+         * @param {string} flavorId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        rejectFlavor: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'id' is not null or undefined
-            assertParamExists('rejectFlavor', 'id', id)
-            const localVarPath = `/flavors/{id}:reject`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+        rejectFlavor: async (flavorId: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'flavorId' is not null or undefined
+            assertParamExists('rejectFlavor', 'flavorId', flavorId)
+            const localVarPath = `/flavors/{flavor_id}:reject`
+                .replace(`{${"flavor_id"}}`, encodeURIComponent(String(flavorId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -1953,18 +1953,18 @@ export const FlavorsApiAxiosParamCreator = function (configuration?: Configurati
         /**
          * Use this method to update a specific flavor from the database.
          * @summary (Admins) Updates an existing flavor
-         * @param {string} id 
+         * @param {string} flavorId 
          * @param {Flavor} flavor 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        updateFlavor: async (id: string, flavor: Flavor, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'id' is not null or undefined
-            assertParamExists('updateFlavor', 'id', id)
+        updateFlavor: async (flavorId: string, flavor: Flavor, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'flavorId' is not null or undefined
+            assertParamExists('updateFlavor', 'flavorId', flavorId)
             // verify required parameter 'flavor' is not null or undefined
             assertParamExists('updateFlavor', 'flavor', flavor)
-            const localVarPath = `/flavors/{id}`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            const localVarPath = `/flavors/{flavor_id}`
+                .replace(`{${"flavor_id"}}`, encodeURIComponent(String(flavorId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -2007,68 +2007,68 @@ export const FlavorsApiFp = function(configuration?: Configuration) {
         /**
          * Use this method to approve an specific flavor submitted by an user. It is a custom method, as side effect, it removes the submit report associated as it is no longer needed.
          * @summary (Admins) Approves a flavor to include it on default list methods
-         * @param {string} id 
+         * @param {string} flavorId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async approveFlavor(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.approveFlavor(id, options);
+        async approveFlavor(flavorId: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.approveFlavor(flavorId, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * Use this method to delete a specific flavor from the database.
          * @summary (Admins) Deletes an existing flavor
-         * @param {string} id 
+         * @param {string} flavorId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async deleteFlavor(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.deleteFlavor(id, options);
+        async deleteFlavor(flavorId: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.deleteFlavor(flavorId, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * Use this method to retrieve a specific flavor from the database.
          * @summary (Public) Retrieves flavor details
-         * @param {string} id 
+         * @param {string} flavorId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getFlavor(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Flavor>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getFlavor(id, options);
+        async getFlavor(flavorId: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Flavor>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getFlavor(flavorId, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * Use this method to retrieve the site information from a specific flavor in the database.
          * @summary (Public) Retrieves flavor site details
-         * @param {string} id 
+         * @param {string} flavorId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getFlavorSite(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Site>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getFlavorSite(id, options);
+        async getFlavorSite(flavorId: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Site>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getFlavorSite(flavorId, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * Use this method instead of DELETE as it raises 422 in case the resource was already approved.  Use this method to reject an specific flavor submitted by an user. It is a custom method, as side effect, it removes the submit report associated as it is no longer needed.
          * @summary (Admins) Rejects a flavor to safe delete it.
-         * @param {string} id 
+         * @param {string} flavorId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async rejectFlavor(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.rejectFlavor(id, options);
+        async rejectFlavor(flavorId: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.rejectFlavor(flavorId, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * Use this method to update a specific flavor from the database.
          * @summary (Admins) Updates an existing flavor
-         * @param {string} id 
+         * @param {string} flavorId 
          * @param {Flavor} flavor 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async updateFlavor(id: string, flavor: Flavor, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.updateFlavor(id, flavor, options);
+        async updateFlavor(flavorId: string, flavor: Flavor, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.updateFlavor(flavorId, flavor, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
     }
@@ -2084,63 +2084,63 @@ export const FlavorsApiFactory = function (configuration?: Configuration, basePa
         /**
          * Use this method to approve an specific flavor submitted by an user. It is a custom method, as side effect, it removes the submit report associated as it is no longer needed.
          * @summary (Admins) Approves a flavor to include it on default list methods
-         * @param {string} id 
+         * @param {string} flavorId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        approveFlavor(id: string, options?: any): AxiosPromise<void> {
-            return localVarFp.approveFlavor(id, options).then((request) => request(axios, basePath));
+        approveFlavor(flavorId: string, options?: any): AxiosPromise<void> {
+            return localVarFp.approveFlavor(flavorId, options).then((request) => request(axios, basePath));
         },
         /**
          * Use this method to delete a specific flavor from the database.
          * @summary (Admins) Deletes an existing flavor
-         * @param {string} id 
+         * @param {string} flavorId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        deleteFlavor(id: string, options?: any): AxiosPromise<void> {
-            return localVarFp.deleteFlavor(id, options).then((request) => request(axios, basePath));
+        deleteFlavor(flavorId: string, options?: any): AxiosPromise<void> {
+            return localVarFp.deleteFlavor(flavorId, options).then((request) => request(axios, basePath));
         },
         /**
          * Use this method to retrieve a specific flavor from the database.
          * @summary (Public) Retrieves flavor details
-         * @param {string} id 
+         * @param {string} flavorId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getFlavor(id: string, options?: any): AxiosPromise<Flavor> {
-            return localVarFp.getFlavor(id, options).then((request) => request(axios, basePath));
+        getFlavor(flavorId: string, options?: any): AxiosPromise<Flavor> {
+            return localVarFp.getFlavor(flavorId, options).then((request) => request(axios, basePath));
         },
         /**
          * Use this method to retrieve the site information from a specific flavor in the database.
          * @summary (Public) Retrieves flavor site details
-         * @param {string} id 
+         * @param {string} flavorId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getFlavorSite(id: string, options?: any): AxiosPromise<Site> {
-            return localVarFp.getFlavorSite(id, options).then((request) => request(axios, basePath));
+        getFlavorSite(flavorId: string, options?: any): AxiosPromise<Site> {
+            return localVarFp.getFlavorSite(flavorId, options).then((request) => request(axios, basePath));
         },
         /**
          * Use this method instead of DELETE as it raises 422 in case the resource was already approved.  Use this method to reject an specific flavor submitted by an user. It is a custom method, as side effect, it removes the submit report associated as it is no longer needed.
          * @summary (Admins) Rejects a flavor to safe delete it.
-         * @param {string} id 
+         * @param {string} flavorId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        rejectFlavor(id: string, options?: any): AxiosPromise<void> {
-            return localVarFp.rejectFlavor(id, options).then((request) => request(axios, basePath));
+        rejectFlavor(flavorId: string, options?: any): AxiosPromise<void> {
+            return localVarFp.rejectFlavor(flavorId, options).then((request) => request(axios, basePath));
         },
         /**
          * Use this method to update a specific flavor from the database.
          * @summary (Admins) Updates an existing flavor
-         * @param {string} id 
+         * @param {string} flavorId 
          * @param {Flavor} flavor 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        updateFlavor(id: string, flavor: Flavor, options?: any): AxiosPromise<void> {
-            return localVarFp.updateFlavor(id, flavor, options).then((request) => request(axios, basePath));
+        updateFlavor(flavorId: string, flavor: Flavor, options?: any): AxiosPromise<void> {
+            return localVarFp.updateFlavor(flavorId, flavor, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -2155,74 +2155,74 @@ export class FlavorsApi extends BaseAPI {
     /**
      * Use this method to approve an specific flavor submitted by an user. It is a custom method, as side effect, it removes the submit report associated as it is no longer needed.
      * @summary (Admins) Approves a flavor to include it on default list methods
-     * @param {string} id 
+     * @param {string} flavorId 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof FlavorsApi
      */
-    public approveFlavor(id: string, options?: AxiosRequestConfig) {
-        return FlavorsApiFp(this.configuration).approveFlavor(id, options).then((request) => request(this.axios, this.basePath));
+    public approveFlavor(flavorId: string, options?: AxiosRequestConfig) {
+        return FlavorsApiFp(this.configuration).approveFlavor(flavorId, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * Use this method to delete a specific flavor from the database.
      * @summary (Admins) Deletes an existing flavor
-     * @param {string} id 
+     * @param {string} flavorId 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof FlavorsApi
      */
-    public deleteFlavor(id: string, options?: AxiosRequestConfig) {
-        return FlavorsApiFp(this.configuration).deleteFlavor(id, options).then((request) => request(this.axios, this.basePath));
+    public deleteFlavor(flavorId: string, options?: AxiosRequestConfig) {
+        return FlavorsApiFp(this.configuration).deleteFlavor(flavorId, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * Use this method to retrieve a specific flavor from the database.
      * @summary (Public) Retrieves flavor details
-     * @param {string} id 
+     * @param {string} flavorId 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof FlavorsApi
      */
-    public getFlavor(id: string, options?: AxiosRequestConfig) {
-        return FlavorsApiFp(this.configuration).getFlavor(id, options).then((request) => request(this.axios, this.basePath));
+    public getFlavor(flavorId: string, options?: AxiosRequestConfig) {
+        return FlavorsApiFp(this.configuration).getFlavor(flavorId, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * Use this method to retrieve the site information from a specific flavor in the database.
      * @summary (Public) Retrieves flavor site details
-     * @param {string} id 
+     * @param {string} flavorId 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof FlavorsApi
      */
-    public getFlavorSite(id: string, options?: AxiosRequestConfig) {
-        return FlavorsApiFp(this.configuration).getFlavorSite(id, options).then((request) => request(this.axios, this.basePath));
+    public getFlavorSite(flavorId: string, options?: AxiosRequestConfig) {
+        return FlavorsApiFp(this.configuration).getFlavorSite(flavorId, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * Use this method instead of DELETE as it raises 422 in case the resource was already approved.  Use this method to reject an specific flavor submitted by an user. It is a custom method, as side effect, it removes the submit report associated as it is no longer needed.
      * @summary (Admins) Rejects a flavor to safe delete it.
-     * @param {string} id 
+     * @param {string} flavorId 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof FlavorsApi
      */
-    public rejectFlavor(id: string, options?: AxiosRequestConfig) {
-        return FlavorsApiFp(this.configuration).rejectFlavor(id, options).then((request) => request(this.axios, this.basePath));
+    public rejectFlavor(flavorId: string, options?: AxiosRequestConfig) {
+        return FlavorsApiFp(this.configuration).rejectFlavor(flavorId, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * Use this method to update a specific flavor from the database.
      * @summary (Admins) Updates an existing flavor
-     * @param {string} id 
+     * @param {string} flavorId 
      * @param {Flavor} flavor 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof FlavorsApi
      */
-    public updateFlavor(id: string, flavor: Flavor, options?: AxiosRequestConfig) {
-        return FlavorsApiFp(this.configuration).updateFlavor(id, flavor, options).then((request) => request(this.axios, this.basePath));
+    public updateFlavor(flavorId: string, flavor: Flavor, options?: AxiosRequestConfig) {
+        return FlavorsApiFp(this.configuration).updateFlavor(flavorId, flavor, options).then((request) => request(this.axios, this.basePath));
     }
 }
 
@@ -2236,15 +2236,15 @@ export const ReportsApiAxiosParamCreator = function (configuration?: Configurati
         /**
          * Use this method to approve an specific resource submitted by an user. It is a custom method, as side effect, it removes the submit report associated as it is no longer needed.
          * @summary (Admin) Accepts an existing claim
-         * @param {string} id 
+         * @param {string} reportId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        approveClaim: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'id' is not null or undefined
-            assertParamExists('approveClaim', 'id', id)
-            const localVarPath = `/reports/claims/{id}:approve`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+        approveClaim: async (reportId: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'reportId' is not null or undefined
+            assertParamExists('approveClaim', 'reportId', reportId)
+            const localVarPath = `/reports/claims/{report_id}:approve`
+                .replace(`{${"report_id"}}`, encodeURIComponent(String(reportId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -2274,15 +2274,15 @@ export const ReportsApiAxiosParamCreator = function (configuration?: Configurati
         /**
          * Use this method to retrieve a specific claim from the database.
          * @summary (Public) Retrieves claim details
-         * @param {string} id 
+         * @param {string} reportId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getClaim: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'id' is not null or undefined
-            assertParamExists('getClaim', 'id', id)
-            const localVarPath = `/reports/claims/{id}`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+        getClaim: async (reportId: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'reportId' is not null or undefined
+            assertParamExists('getClaim', 'reportId', reportId)
+            const localVarPath = `/reports/claims/{report_id}`
+                .replace(`{${"report_id"}}`, encodeURIComponent(String(reportId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -2448,15 +2448,15 @@ export const ReportsApiAxiosParamCreator = function (configuration?: Configurati
         /**
          * Use this method to reject an specific resource submitted by an user. It is a custom method, as side effect, it removes the resource and the submit report associated as it is no longer needed.
          * @summary (Admin) Refuses an existing claim
-         * @param {string} id 
+         * @param {string} reportId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        rejectClaim: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'id' is not null or undefined
-            assertParamExists('rejectClaim', 'id', id)
-            const localVarPath = `/reports/claims/{id}:reject`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+        rejectClaim: async (reportId: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'reportId' is not null or undefined
+            assertParamExists('rejectClaim', 'reportId', reportId)
+            const localVarPath = `/reports/claims/{report_id}:reject`
+                .replace(`{${"report_id"}}`, encodeURIComponent(String(reportId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -2496,23 +2496,23 @@ export const ReportsApiFp = function(configuration?: Configuration) {
         /**
          * Use this method to approve an specific resource submitted by an user. It is a custom method, as side effect, it removes the submit report associated as it is no longer needed.
          * @summary (Admin) Accepts an existing claim
-         * @param {string} id 
+         * @param {string} reportId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async approveClaim(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.approveClaim(id, options);
+        async approveClaim(reportId: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.approveClaim(reportId, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * Use this method to retrieve a specific claim from the database.
          * @summary (Public) Retrieves claim details
-         * @param {string} id 
+         * @param {string} reportId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getClaim(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Claim>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getClaim(id, options);
+        async getClaim(reportId: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Claim>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getClaim(reportId, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -2550,12 +2550,12 @@ export const ReportsApiFp = function(configuration?: Configuration) {
         /**
          * Use this method to reject an specific resource submitted by an user. It is a custom method, as side effect, it removes the resource and the submit report associated as it is no longer needed.
          * @summary (Admin) Refuses an existing claim
-         * @param {string} id 
+         * @param {string} reportId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async rejectClaim(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.rejectClaim(id, options);
+        async rejectClaim(reportId: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.rejectClaim(reportId, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
     }
@@ -2571,22 +2571,22 @@ export const ReportsApiFactory = function (configuration?: Configuration, basePa
         /**
          * Use this method to approve an specific resource submitted by an user. It is a custom method, as side effect, it removes the submit report associated as it is no longer needed.
          * @summary (Admin) Accepts an existing claim
-         * @param {string} id 
+         * @param {string} reportId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        approveClaim(id: string, options?: any): AxiosPromise<void> {
-            return localVarFp.approveClaim(id, options).then((request) => request(axios, basePath));
+        approveClaim(reportId: string, options?: any): AxiosPromise<void> {
+            return localVarFp.approveClaim(reportId, options).then((request) => request(axios, basePath));
         },
         /**
          * Use this method to retrieve a specific claim from the database.
          * @summary (Public) Retrieves claim details
-         * @param {string} id 
+         * @param {string} reportId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getClaim(id: string, options?: any): AxiosPromise<Claim> {
-            return localVarFp.getClaim(id, options).then((request) => request(axios, basePath));
+        getClaim(reportId: string, options?: any): AxiosPromise<Claim> {
+            return localVarFp.getClaim(reportId, options).then((request) => request(axios, basePath));
         },
         /**
          * Use this method to get a list of claims filtered according to your requirements. The response returns a pagination object with the filtered claims (if succeeds).
@@ -2621,12 +2621,12 @@ export const ReportsApiFactory = function (configuration?: Configuration, basePa
         /**
          * Use this method to reject an specific resource submitted by an user. It is a custom method, as side effect, it removes the resource and the submit report associated as it is no longer needed.
          * @summary (Admin) Refuses an existing claim
-         * @param {string} id 
+         * @param {string} reportId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        rejectClaim(id: string, options?: any): AxiosPromise<void> {
-            return localVarFp.rejectClaim(id, options).then((request) => request(axios, basePath));
+        rejectClaim(reportId: string, options?: any): AxiosPromise<void> {
+            return localVarFp.rejectClaim(reportId, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -2641,25 +2641,25 @@ export class ReportsApi extends BaseAPI {
     /**
      * Use this method to approve an specific resource submitted by an user. It is a custom method, as side effect, it removes the submit report associated as it is no longer needed.
      * @summary (Admin) Accepts an existing claim
-     * @param {string} id 
+     * @param {string} reportId 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ReportsApi
      */
-    public approveClaim(id: string, options?: AxiosRequestConfig) {
-        return ReportsApiFp(this.configuration).approveClaim(id, options).then((request) => request(this.axios, this.basePath));
+    public approveClaim(reportId: string, options?: AxiosRequestConfig) {
+        return ReportsApiFp(this.configuration).approveClaim(reportId, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * Use this method to retrieve a specific claim from the database.
      * @summary (Public) Retrieves claim details
-     * @param {string} id 
+     * @param {string} reportId 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ReportsApi
      */
-    public getClaim(id: string, options?: AxiosRequestConfig) {
-        return ReportsApiFp(this.configuration).getClaim(id, options).then((request) => request(this.axios, this.basePath));
+    public getClaim(reportId: string, options?: AxiosRequestConfig) {
+        return ReportsApiFp(this.configuration).getClaim(reportId, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -2699,13 +2699,13 @@ export class ReportsApi extends BaseAPI {
     /**
      * Use this method to reject an specific resource submitted by an user. It is a custom method, as side effect, it removes the resource and the submit report associated as it is no longer needed.
      * @summary (Admin) Refuses an existing claim
-     * @param {string} id 
+     * @param {string} reportId 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ReportsApi
      */
-    public rejectClaim(id: string, options?: AxiosRequestConfig) {
-        return ReportsApiFp(this.configuration).rejectClaim(id, options).then((request) => request(this.axios, this.basePath));
+    public rejectClaim(reportId: string, options?: AxiosRequestConfig) {
+        return ReportsApiFp(this.configuration).rejectClaim(reportId, options).then((request) => request(this.axios, this.basePath));
     }
 }
 
@@ -2719,18 +2719,18 @@ export const ResultsApiAxiosParamCreator = function (configuration?: Configurati
         /**
          * Use this method to create a report for a specific result so the administrators are aware of issues. The reported result is hidden from generic responses until the issue is corrected and approved by the administrators.
          * @summary (Users) Reports a result
-         * @param {string} id 
+         * @param {string} resultId 
          * @param {CreateClaim} createClaim 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        claimReport: async (id: string, createClaim: CreateClaim, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'id' is not null or undefined
-            assertParamExists('claimReport', 'id', id)
+        claimReport: async (resultId: string, createClaim: CreateClaim, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'resultId' is not null or undefined
+            assertParamExists('claimReport', 'resultId', resultId)
             // verify required parameter 'createClaim' is not null or undefined
             assertParamExists('claimReport', 'createClaim', createClaim)
-            const localVarPath = `/results/{id}:claim`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            const localVarPath = `/results/{result_id}:claim`
+                .replace(`{${"result_id"}}`, encodeURIComponent(String(resultId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -2831,15 +2831,15 @@ export const ResultsApiAxiosParamCreator = function (configuration?: Configurati
         /**
          * Use this method to delete a specific result from the database.
          * @summary (Admin) Deletes an existing result
-         * @param {string} id 
+         * @param {string} resultId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        deleteResult: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'id' is not null or undefined
-            assertParamExists('deleteResult', 'id', id)
-            const localVarPath = `/results/{id}`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+        deleteResult: async (resultId: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'resultId' is not null or undefined
+            assertParamExists('deleteResult', 'resultId', resultId)
+            const localVarPath = `/results/{result_id}`
+                .replace(`{${"result_id"}}`, encodeURIComponent(String(resultId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -2869,15 +2869,15 @@ export const ResultsApiAxiosParamCreator = function (configuration?: Configurati
         /**
          * Use this method to retrieve a specific result from the database.
          * @summary (Public) Retrieves result details
-         * @param {string} id 
+         * @param {string} resultId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getResult: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'id' is not null or undefined
-            assertParamExists('getResult', 'id', id)
-            const localVarPath = `/results/{id}`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+        getResult: async (resultId: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'resultId' is not null or undefined
+            assertParamExists('getResult', 'resultId', resultId)
+            const localVarPath = `/results/{result_id}`
+                .replace(`{${"result_id"}}`, encodeURIComponent(String(resultId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -2907,7 +2907,7 @@ export const ResultsApiAxiosParamCreator = function (configuration?: Configurati
         /**
          * Use this method to retrieve all the result claims.
          * @summary (Owner or Admins) Returns the result claims.
-         * @param {string} id 
+         * @param {string} resultId 
          * @param {'on_review' | 'approved'} [status] Resource current state
          * @param {string} [uploadBefore] Results with upload before date (ISO8601)
          * @param {string} [uploadAfter] Results with upload after date (ISO8601)
@@ -2917,11 +2917,11 @@ export const ResultsApiAxiosParamCreator = function (configuration?: Configurati
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        listResultClaims: async (id: string, status?: 'on_review' | 'approved', uploadBefore?: string, uploadAfter?: string, perPage?: number, page?: number, sortBy?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'id' is not null or undefined
-            assertParamExists('listResultClaims', 'id', id)
-            const localVarPath = `/results/{id}/claims`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+        listResultClaims: async (resultId: string, status?: 'on_review' | 'approved', uploadBefore?: string, uploadAfter?: string, perPage?: number, page?: number, sortBy?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'resultId' is not null or undefined
+            assertParamExists('listResultClaims', 'resultId', resultId)
+            const localVarPath = `/results/{result_id}/claims`
+                .replace(`{${"result_id"}}`, encodeURIComponent(String(resultId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -3081,15 +3081,15 @@ export const ResultsApiAxiosParamCreator = function (configuration?: Configurati
         /**
          * Use this method to retrieve the uploader of a specific result from the database.
          * @summary (Admins) Retrieves result uploader
-         * @param {string} id 
+         * @param {string} resultId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        resultUploader: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'id' is not null or undefined
-            assertParamExists('resultUploader', 'id', id)
-            const localVarPath = `/results/{id}/uploader`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+        resultUploader: async (resultId: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'resultId' is not null or undefined
+            assertParamExists('resultUploader', 'resultId', resultId)
+            const localVarPath = `/results/{result_id}/uploader`
+                .replace(`{${"result_id"}}`, encodeURIComponent(String(resultId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -3187,18 +3187,18 @@ export const ResultsApiAxiosParamCreator = function (configuration?: Configurati
         /**
          * Use this method to update tags on a specific result from the database.
          * @summary (Owner or Admin) Updates an existing result tags
-         * @param {string} id 
+         * @param {string} resultId 
          * @param {TagsIds} tagsIds 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        updateResult: async (id: string, tagsIds: TagsIds, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'id' is not null or undefined
-            assertParamExists('updateResult', 'id', id)
+        updateResult: async (resultId: string, tagsIds: TagsIds, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'resultId' is not null or undefined
+            assertParamExists('updateResult', 'resultId', resultId)
             // verify required parameter 'tagsIds' is not null or undefined
             assertParamExists('updateResult', 'tagsIds', tagsIds)
-            const localVarPath = `/results/{id}/tags`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            const localVarPath = `/results/{result_id}/tags`
+                .replace(`{${"result_id"}}`, encodeURIComponent(String(resultId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -3241,13 +3241,13 @@ export const ResultsApiFp = function(configuration?: Configuration) {
         /**
          * Use this method to create a report for a specific result so the administrators are aware of issues. The reported result is hidden from generic responses until the issue is corrected and approved by the administrators.
          * @summary (Users) Reports a result
-         * @param {string} id 
+         * @param {string} resultId 
          * @param {CreateClaim} createClaim 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async claimReport(id: string, createClaim: CreateClaim, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Claim>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.claimReport(id, createClaim, options);
+        async claimReport(resultId: string, createClaim: CreateClaim, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Claim>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.claimReport(resultId, createClaim, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -3268,29 +3268,29 @@ export const ResultsApiFp = function(configuration?: Configuration) {
         /**
          * Use this method to delete a specific result from the database.
          * @summary (Admin) Deletes an existing result
-         * @param {string} id 
+         * @param {string} resultId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async deleteResult(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.deleteResult(id, options);
+        async deleteResult(resultId: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.deleteResult(resultId, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * Use this method to retrieve a specific result from the database.
          * @summary (Public) Retrieves result details
-         * @param {string} id 
+         * @param {string} resultId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getResult(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Result>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getResult(id, options);
+        async getResult(resultId: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Result>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getResult(resultId, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * Use this method to retrieve all the result claims.
          * @summary (Owner or Admins) Returns the result claims.
-         * @param {string} id 
+         * @param {string} resultId 
          * @param {'on_review' | 'approved'} [status] Resource current state
          * @param {string} [uploadBefore] Results with upload before date (ISO8601)
          * @param {string} [uploadAfter] Results with upload after date (ISO8601)
@@ -3300,8 +3300,8 @@ export const ResultsApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async listResultClaims(id: string, status?: 'on_review' | 'approved', uploadBefore?: string, uploadAfter?: string, perPage?: number, page?: number, sortBy?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Claims>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.listResultClaims(id, status, uploadBefore, uploadAfter, perPage, page, sortBy, options);
+        async listResultClaims(resultId: string, status?: 'on_review' | 'approved', uploadBefore?: string, uploadAfter?: string, perPage?: number, page?: number, sortBy?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Claims>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.listResultClaims(resultId, status, uploadBefore, uploadAfter, perPage, page, sortBy, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -3329,12 +3329,12 @@ export const ResultsApiFp = function(configuration?: Configuration) {
         /**
          * Use this method to retrieve the uploader of a specific result from the database.
          * @summary (Admins) Retrieves result uploader
-         * @param {string} id 
+         * @param {string} resultId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async resultUploader(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<User>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.resultUploader(id, options);
+        async resultUploader(resultId: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<User>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.resultUploader(resultId, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -3356,13 +3356,13 @@ export const ResultsApiFp = function(configuration?: Configuration) {
         /**
          * Use this method to update tags on a specific result from the database.
          * @summary (Owner or Admin) Updates an existing result tags
-         * @param {string} id 
+         * @param {string} resultId 
          * @param {TagsIds} tagsIds 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async updateResult(id: string, tagsIds: TagsIds, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.updateResult(id, tagsIds, options);
+        async updateResult(resultId: string, tagsIds: TagsIds, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.updateResult(resultId, tagsIds, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
     }
@@ -3378,13 +3378,13 @@ export const ResultsApiFactory = function (configuration?: Configuration, basePa
         /**
          * Use this method to create a report for a specific result so the administrators are aware of issues. The reported result is hidden from generic responses until the issue is corrected and approved by the administrators.
          * @summary (Users) Reports a result
-         * @param {string} id 
+         * @param {string} resultId 
          * @param {CreateClaim} createClaim 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        claimReport(id: string, createClaim: CreateClaim, options?: any): AxiosPromise<Claim> {
-            return localVarFp.claimReport(id, createClaim, options).then((request) => request(axios, basePath));
+        claimReport(resultId: string, createClaim: CreateClaim, options?: any): AxiosPromise<Claim> {
+            return localVarFp.claimReport(resultId, createClaim, options).then((request) => request(axios, basePath));
         },
         /**
          * Use this method to create a new result in the database so it can be accessed by the application users. The method returns the complete created result (if succeeds).  The uploaded result must pass the benchmark JSON Schema to be accepted, otherwise 422 UnprocessableEntity is produced. In addition, an execution_datetime must be provided in order to indicate the time when the benchmark was executed. It should be in ISO8601 format and include the timezone.
@@ -3403,27 +3403,27 @@ export const ResultsApiFactory = function (configuration?: Configuration, basePa
         /**
          * Use this method to delete a specific result from the database.
          * @summary (Admin) Deletes an existing result
-         * @param {string} id 
+         * @param {string} resultId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        deleteResult(id: string, options?: any): AxiosPromise<void> {
-            return localVarFp.deleteResult(id, options).then((request) => request(axios, basePath));
+        deleteResult(resultId: string, options?: any): AxiosPromise<void> {
+            return localVarFp.deleteResult(resultId, options).then((request) => request(axios, basePath));
         },
         /**
          * Use this method to retrieve a specific result from the database.
          * @summary (Public) Retrieves result details
-         * @param {string} id 
+         * @param {string} resultId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getResult(id: string, options?: any): AxiosPromise<Result> {
-            return localVarFp.getResult(id, options).then((request) => request(axios, basePath));
+        getResult(resultId: string, options?: any): AxiosPromise<Result> {
+            return localVarFp.getResult(resultId, options).then((request) => request(axios, basePath));
         },
         /**
          * Use this method to retrieve all the result claims.
          * @summary (Owner or Admins) Returns the result claims.
-         * @param {string} id 
+         * @param {string} resultId 
          * @param {'on_review' | 'approved'} [status] Resource current state
          * @param {string} [uploadBefore] Results with upload before date (ISO8601)
          * @param {string} [uploadAfter] Results with upload after date (ISO8601)
@@ -3433,8 +3433,8 @@ export const ResultsApiFactory = function (configuration?: Configuration, basePa
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        listResultClaims(id: string, status?: 'on_review' | 'approved', uploadBefore?: string, uploadAfter?: string, perPage?: number, page?: number, sortBy?: string, options?: any): AxiosPromise<Claims> {
-            return localVarFp.listResultClaims(id, status, uploadBefore, uploadAfter, perPage, page, sortBy, options).then((request) => request(axios, basePath));
+        listResultClaims(resultId: string, status?: 'on_review' | 'approved', uploadBefore?: string, uploadAfter?: string, perPage?: number, page?: number, sortBy?: string, options?: any): AxiosPromise<Claims> {
+            return localVarFp.listResultClaims(resultId, status, uploadBefore, uploadAfter, perPage, page, sortBy, options).then((request) => request(axios, basePath));
         },
         /**
          * Use this method to get a list of results filtered according to your requirements. The response returns a pagination object with the filtered results (if succeeds).  This method allows to return results filtered by values inside the result. The filter is composed by 3 arguments separated by spaces (\'%20\' on URL-encoding): <path.separated.by.dots> <operator> <value>  There are five filter operators:   - **Equals (==)**: Return results where path value is exact to the    query value. For example *filters=cpu.count == 5*  - **Greater than (>)**: Return results where path value strictly    greater than the query value. For example *filters=cpu.count > 5*  - **Less than (<)**: Return results where path value strictly lower    than the query value. For example *filters=cpu.count < 5*  - **Greater or equal (>=)**: Return results where path value is equal    or greater than the query value. For example *filters=cpu.count >= 5*  - **Less or equal (<=)**: Return results where path value is equal or    lower than the query value. For example *filters=cpu.count <= 5*  Note that in the provided examples the filter is not URL-encoded as most libraries do it automatically, however there might be exception. In such cases, use the url encoding guide at: https://datatracker.ietf.org/doc/html/rfc3986#section-2.1
@@ -3460,12 +3460,12 @@ export const ResultsApiFactory = function (configuration?: Configuration, basePa
         /**
          * Use this method to retrieve the uploader of a specific result from the database.
          * @summary (Admins) Retrieves result uploader
-         * @param {string} id 
+         * @param {string} resultId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        resultUploader(id: string, options?: any): AxiosPromise<User> {
-            return localVarFp.resultUploader(id, options).then((request) => request(axios, basePath));
+        resultUploader(resultId: string, options?: any): AxiosPromise<User> {
+            return localVarFp.resultUploader(resultId, options).then((request) => request(axios, basePath));
         },
         /**
          * Use this method to get a list of results based on a general search of terms. For example, calling this method with terms=v1&terms=0 returns all results with \'v1\' and \'0\' on the \'docker_image\', \'docker_tag\', \'site_name\', \'flavor_name\' fields or \'tags\'. The response returns a pagination object with the filtered results (if succeeds).
@@ -3485,13 +3485,13 @@ export const ResultsApiFactory = function (configuration?: Configuration, basePa
         /**
          * Use this method to update tags on a specific result from the database.
          * @summary (Owner or Admin) Updates an existing result tags
-         * @param {string} id 
+         * @param {string} resultId 
          * @param {TagsIds} tagsIds 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        updateResult(id: string, tagsIds: TagsIds, options?: any): AxiosPromise<void> {
-            return localVarFp.updateResult(id, tagsIds, options).then((request) => request(axios, basePath));
+        updateResult(resultId: string, tagsIds: TagsIds, options?: any): AxiosPromise<void> {
+            return localVarFp.updateResult(resultId, tagsIds, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -3506,14 +3506,14 @@ export class ResultsApi extends BaseAPI {
     /**
      * Use this method to create a report for a specific result so the administrators are aware of issues. The reported result is hidden from generic responses until the issue is corrected and approved by the administrators.
      * @summary (Users) Reports a result
-     * @param {string} id 
+     * @param {string} resultId 
      * @param {CreateClaim} createClaim 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ResultsApi
      */
-    public claimReport(id: string, createClaim: CreateClaim, options?: AxiosRequestConfig) {
-        return ResultsApiFp(this.configuration).claimReport(id, createClaim, options).then((request) => request(this.axios, this.basePath));
+    public claimReport(resultId: string, createClaim: CreateClaim, options?: AxiosRequestConfig) {
+        return ResultsApiFp(this.configuration).claimReport(resultId, createClaim, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -3535,31 +3535,31 @@ export class ResultsApi extends BaseAPI {
     /**
      * Use this method to delete a specific result from the database.
      * @summary (Admin) Deletes an existing result
-     * @param {string} id 
+     * @param {string} resultId 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ResultsApi
      */
-    public deleteResult(id: string, options?: AxiosRequestConfig) {
-        return ResultsApiFp(this.configuration).deleteResult(id, options).then((request) => request(this.axios, this.basePath));
+    public deleteResult(resultId: string, options?: AxiosRequestConfig) {
+        return ResultsApiFp(this.configuration).deleteResult(resultId, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * Use this method to retrieve a specific result from the database.
      * @summary (Public) Retrieves result details
-     * @param {string} id 
+     * @param {string} resultId 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ResultsApi
      */
-    public getResult(id: string, options?: AxiosRequestConfig) {
-        return ResultsApiFp(this.configuration).getResult(id, options).then((request) => request(this.axios, this.basePath));
+    public getResult(resultId: string, options?: AxiosRequestConfig) {
+        return ResultsApiFp(this.configuration).getResult(resultId, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * Use this method to retrieve all the result claims.
      * @summary (Owner or Admins) Returns the result claims.
-     * @param {string} id 
+     * @param {string} resultId 
      * @param {'on_review' | 'approved'} [status] Resource current state
      * @param {string} [uploadBefore] Results with upload before date (ISO8601)
      * @param {string} [uploadAfter] Results with upload after date (ISO8601)
@@ -3570,8 +3570,8 @@ export class ResultsApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof ResultsApi
      */
-    public listResultClaims(id: string, status?: 'on_review' | 'approved', uploadBefore?: string, uploadAfter?: string, perPage?: number, page?: number, sortBy?: string, options?: AxiosRequestConfig) {
-        return ResultsApiFp(this.configuration).listResultClaims(id, status, uploadBefore, uploadAfter, perPage, page, sortBy, options).then((request) => request(this.axios, this.basePath));
+    public listResultClaims(resultId: string, status?: 'on_review' | 'approved', uploadBefore?: string, uploadAfter?: string, perPage?: number, page?: number, sortBy?: string, options?: AxiosRequestConfig) {
+        return ResultsApiFp(this.configuration).listResultClaims(resultId, status, uploadBefore, uploadAfter, perPage, page, sortBy, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -3600,13 +3600,13 @@ export class ResultsApi extends BaseAPI {
     /**
      * Use this method to retrieve the uploader of a specific result from the database.
      * @summary (Admins) Retrieves result uploader
-     * @param {string} id 
+     * @param {string} resultId 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ResultsApi
      */
-    public resultUploader(id: string, options?: AxiosRequestConfig) {
-        return ResultsApiFp(this.configuration).resultUploader(id, options).then((request) => request(this.axios, this.basePath));
+    public resultUploader(resultId: string, options?: AxiosRequestConfig) {
+        return ResultsApiFp(this.configuration).resultUploader(resultId, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -3629,14 +3629,14 @@ export class ResultsApi extends BaseAPI {
     /**
      * Use this method to update tags on a specific result from the database.
      * @summary (Owner or Admin) Updates an existing result tags
-     * @param {string} id 
+     * @param {string} resultId 
      * @param {TagsIds} tagsIds 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ResultsApi
      */
-    public updateResult(id: string, tagsIds: TagsIds, options?: AxiosRequestConfig) {
-        return ResultsApiFp(this.configuration).updateResult(id, tagsIds, options).then((request) => request(this.axios, this.basePath));
+    public updateResult(resultId: string, tagsIds: TagsIds, options?: AxiosRequestConfig) {
+        return ResultsApiFp(this.configuration).updateResult(resultId, tagsIds, options).then((request) => request(this.axios, this.basePath));
     }
 }
 
@@ -3650,18 +3650,18 @@ export const SitesApiAxiosParamCreator = function (configuration?: Configuration
         /**
          * Use this method to create a new flavors in the database so it can be accessed by the application users. The method returns the complete created flavor (if succeeds).
          * @summary (Users) Uploads a new flavor
-         * @param {string} id 
+         * @param {string} siteId 
          * @param {CreateFlavor} createFlavor 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        addFlavor: async (id: string, createFlavor: CreateFlavor, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'id' is not null or undefined
-            assertParamExists('addFlavor', 'id', id)
+        addFlavor: async (siteId: string, createFlavor: CreateFlavor, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'siteId' is not null or undefined
+            assertParamExists('addFlavor', 'siteId', siteId)
             // verify required parameter 'createFlavor' is not null or undefined
             assertParamExists('addFlavor', 'createFlavor', createFlavor)
-            const localVarPath = `/sites/{id}/flavors`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            const localVarPath = `/sites/{site_id}/flavors`
+                .replace(`{${"site_id"}}`, encodeURIComponent(String(siteId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -3694,15 +3694,15 @@ export const SitesApiAxiosParamCreator = function (configuration?: Configuration
         /**
          * Use this method to approve an specific site submitted by an user. It is a custom method, as side effect, it removes the submit report associated as it is no longer needed.
          * @summary (Admins) Approves a site to include it on default list methods
-         * @param {string} id 
+         * @param {string} siteId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        approveSite: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'id' is not null or undefined
-            assertParamExists('approveSite', 'id', id)
-            const localVarPath = `/sites/{id}:approve`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+        approveSite: async (siteId: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'siteId' is not null or undefined
+            assertParamExists('approveSite', 'siteId', siteId)
+            const localVarPath = `/sites/{site_id}:approve`
+                .replace(`{${"site_id"}}`, encodeURIComponent(String(siteId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -3772,15 +3772,15 @@ export const SitesApiAxiosParamCreator = function (configuration?: Configuration
         /**
          * Use this method to delete a specific site from the database.
          * @summary (Admins) Deletes an existing site
-         * @param {string} id 
+         * @param {string} siteId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        deleteSite: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'id' is not null or undefined
-            assertParamExists('deleteSite', 'id', id)
-            const localVarPath = `/sites/{id}`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+        deleteSite: async (siteId: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'siteId' is not null or undefined
+            assertParamExists('deleteSite', 'siteId', siteId)
+            const localVarPath = `/sites/{site_id}`
+                .replace(`{${"site_id"}}`, encodeURIComponent(String(siteId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -3810,15 +3810,15 @@ export const SitesApiAxiosParamCreator = function (configuration?: Configuration
         /**
          * Use this method to retrieve a specific site from the database.
          * @summary (Public) Retrieves site details
-         * @param {string} id 
+         * @param {string} siteId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getSite: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'id' is not null or undefined
-            assertParamExists('getSite', 'id', id)
-            const localVarPath = `/sites/{id}`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+        getSite: async (siteId: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'siteId' is not null or undefined
+            assertParamExists('getSite', 'siteId', siteId)
+            const localVarPath = `/sites/{site_id}`
+                .replace(`{${"site_id"}}`, encodeURIComponent(String(siteId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -3848,7 +3848,7 @@ export const SitesApiAxiosParamCreator = function (configuration?: Configuration
         /**
          * Use this method to get a list of flavors filtered according to your requirements. The response returns a pagination object with the filtered flavors (if succeeds).
          * @summary (Public) Filters and list flavors
-         * @param {string} id 
+         * @param {string} siteId 
          * @param {'on_review' | 'approved'} [status] Resource current state
          * @param {string} [uploadBefore] Results with upload before date (ISO8601)
          * @param {string} [uploadAfter] Results with upload after date (ISO8601)
@@ -3859,11 +3859,11 @@ export const SitesApiAxiosParamCreator = function (configuration?: Configuration
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        listFlavors: async (id: string, status?: 'on_review' | 'approved', uploadBefore?: string, uploadAfter?: string, perPage?: number, page?: number, name?: string, sortBy?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'id' is not null or undefined
-            assertParamExists('listFlavors', 'id', id)
-            const localVarPath = `/sites/{id}/flavors`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+        listFlavors: async (siteId: string, status?: 'on_review' | 'approved', uploadBefore?: string, uploadAfter?: string, perPage?: number, page?: number, name?: string, sortBy?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'siteId' is not null or undefined
+            assertParamExists('listFlavors', 'siteId', siteId)
+            const localVarPath = `/sites/{site_id}/flavors`
+                .replace(`{${"site_id"}}`, encodeURIComponent(String(siteId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -4003,15 +4003,15 @@ export const SitesApiAxiosParamCreator = function (configuration?: Configuration
         /**
          * Use this method instead of DELETE as it raises 422 in case the resource was already approved.  Use this method to reject an specific site submitted by an user. It is a custom method, as side effect, it removes the submit report associated as it is no longer needed.
          * @summary (Admins) Rejects a site to safe delete it.
-         * @param {string} id 
+         * @param {string} siteId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        rejectSite: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'id' is not null or undefined
-            assertParamExists('rejectSite', 'id', id)
-            const localVarPath = `/sites/{id}:reject`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+        rejectSite: async (siteId: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'siteId' is not null or undefined
+            assertParamExists('rejectSite', 'siteId', siteId)
+            const localVarPath = `/sites/{site_id}:reject`
+                .replace(`{${"site_id"}}`, encodeURIComponent(String(siteId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -4041,7 +4041,7 @@ export const SitesApiAxiosParamCreator = function (configuration?: Configuration
         /**
          * Use this method to get a list of flavors based on a general search of terms. For example, calling this method with terms=K&terms=T returns all flavors with \'K\' and \'T\' on the \'name\', or \'description\' fields. The response returns a pagination object with the filtered flavors (if succeeds).
          * @summary (Public) Filters and list flavors
-         * @param {string} id 
+         * @param {string} siteId 
          * @param {Array<string>} [terms] List of terms (string subsets)
          * @param {string} [sortBy] Order to return the results (coma separated)
          * @param {'on_review' | 'approved'} [status] Resource current state
@@ -4052,11 +4052,11 @@ export const SitesApiAxiosParamCreator = function (configuration?: Configuration
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        searchFlavor: async (id: string, terms?: Array<string>, sortBy?: string, status?: 'on_review' | 'approved', uploadBefore?: string, uploadAfter?: string, perPage?: number, page?: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'id' is not null or undefined
-            assertParamExists('searchFlavor', 'id', id)
-            const localVarPath = `/sites/{id}/flavors:search`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+        searchFlavor: async (siteId: string, terms?: Array<string>, sortBy?: string, status?: 'on_review' | 'approved', uploadBefore?: string, uploadAfter?: string, perPage?: number, page?: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'siteId' is not null or undefined
+            assertParamExists('searchFlavor', 'siteId', siteId)
+            const localVarPath = `/sites/{site_id}/flavors:search`
+                .replace(`{${"site_id"}}`, encodeURIComponent(String(siteId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -4191,18 +4191,18 @@ export const SitesApiAxiosParamCreator = function (configuration?: Configuration
         /**
          * Use this method to update a specific site from the database.
          * @summary (Admins) Updates an existing site
-         * @param {string} id 
+         * @param {string} siteId 
          * @param {Site} site 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        updateSite: async (id: string, site: Site, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'id' is not null or undefined
-            assertParamExists('updateSite', 'id', id)
+        updateSite: async (siteId: string, site: Site, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'siteId' is not null or undefined
+            assertParamExists('updateSite', 'siteId', siteId)
             // verify required parameter 'site' is not null or undefined
             assertParamExists('updateSite', 'site', site)
-            const localVarPath = `/sites/{id}`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            const localVarPath = `/sites/{site_id}`
+                .replace(`{${"site_id"}}`, encodeURIComponent(String(siteId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -4245,24 +4245,24 @@ export const SitesApiFp = function(configuration?: Configuration) {
         /**
          * Use this method to create a new flavors in the database so it can be accessed by the application users. The method returns the complete created flavor (if succeeds).
          * @summary (Users) Uploads a new flavor
-         * @param {string} id 
+         * @param {string} siteId 
          * @param {CreateFlavor} createFlavor 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async addFlavor(id: string, createFlavor: CreateFlavor, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Flavor>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.addFlavor(id, createFlavor, options);
+        async addFlavor(siteId: string, createFlavor: CreateFlavor, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Flavor>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.addFlavor(siteId, createFlavor, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * Use this method to approve an specific site submitted by an user. It is a custom method, as side effect, it removes the submit report associated as it is no longer needed.
          * @summary (Admins) Approves a site to include it on default list methods
-         * @param {string} id 
+         * @param {string} siteId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async approveSite(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.approveSite(id, options);
+        async approveSite(siteId: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.approveSite(siteId, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -4279,29 +4279,29 @@ export const SitesApiFp = function(configuration?: Configuration) {
         /**
          * Use this method to delete a specific site from the database.
          * @summary (Admins) Deletes an existing site
-         * @param {string} id 
+         * @param {string} siteId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async deleteSite(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.deleteSite(id, options);
+        async deleteSite(siteId: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.deleteSite(siteId, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * Use this method to retrieve a specific site from the database.
          * @summary (Public) Retrieves site details
-         * @param {string} id 
+         * @param {string} siteId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getSite(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Site>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getSite(id, options);
+        async getSite(siteId: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Site>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getSite(siteId, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * Use this method to get a list of flavors filtered according to your requirements. The response returns a pagination object with the filtered flavors (if succeeds).
          * @summary (Public) Filters and list flavors
-         * @param {string} id 
+         * @param {string} siteId 
          * @param {'on_review' | 'approved'} [status] Resource current state
          * @param {string} [uploadBefore] Results with upload before date (ISO8601)
          * @param {string} [uploadAfter] Results with upload after date (ISO8601)
@@ -4312,8 +4312,8 @@ export const SitesApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async listFlavors(id: string, status?: 'on_review' | 'approved', uploadBefore?: string, uploadAfter?: string, perPage?: number, page?: number, name?: string, sortBy?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Flavors>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.listFlavors(id, status, uploadBefore, uploadAfter, perPage, page, name, sortBy, options);
+        async listFlavors(siteId: string, status?: 'on_review' | 'approved', uploadBefore?: string, uploadAfter?: string, perPage?: number, page?: number, name?: string, sortBy?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Flavors>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.listFlavors(siteId, status, uploadBefore, uploadAfter, perPage, page, name, sortBy, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -4337,18 +4337,18 @@ export const SitesApiFp = function(configuration?: Configuration) {
         /**
          * Use this method instead of DELETE as it raises 422 in case the resource was already approved.  Use this method to reject an specific site submitted by an user. It is a custom method, as side effect, it removes the submit report associated as it is no longer needed.
          * @summary (Admins) Rejects a site to safe delete it.
-         * @param {string} id 
+         * @param {string} siteId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async rejectSite(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.rejectSite(id, options);
+        async rejectSite(siteId: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.rejectSite(siteId, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * Use this method to get a list of flavors based on a general search of terms. For example, calling this method with terms=K&terms=T returns all flavors with \'K\' and \'T\' on the \'name\', or \'description\' fields. The response returns a pagination object with the filtered flavors (if succeeds).
          * @summary (Public) Filters and list flavors
-         * @param {string} id 
+         * @param {string} siteId 
          * @param {Array<string>} [terms] List of terms (string subsets)
          * @param {string} [sortBy] Order to return the results (coma separated)
          * @param {'on_review' | 'approved'} [status] Resource current state
@@ -4359,8 +4359,8 @@ export const SitesApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async searchFlavor(id: string, terms?: Array<string>, sortBy?: string, status?: 'on_review' | 'approved', uploadBefore?: string, uploadAfter?: string, perPage?: number, page?: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Flavors>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.searchFlavor(id, terms, sortBy, status, uploadBefore, uploadAfter, perPage, page, options);
+        async searchFlavor(siteId: string, terms?: Array<string>, sortBy?: string, status?: 'on_review' | 'approved', uploadBefore?: string, uploadAfter?: string, perPage?: number, page?: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Flavors>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.searchFlavor(siteId, terms, sortBy, status, uploadBefore, uploadAfter, perPage, page, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -4383,13 +4383,13 @@ export const SitesApiFp = function(configuration?: Configuration) {
         /**
          * Use this method to update a specific site from the database.
          * @summary (Admins) Updates an existing site
-         * @param {string} id 
+         * @param {string} siteId 
          * @param {Site} site 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async updateSite(id: string, site: Site, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.updateSite(id, site, options);
+        async updateSite(siteId: string, site: Site, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.updateSite(siteId, site, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
     }
@@ -4405,23 +4405,23 @@ export const SitesApiFactory = function (configuration?: Configuration, basePath
         /**
          * Use this method to create a new flavors in the database so it can be accessed by the application users. The method returns the complete created flavor (if succeeds).
          * @summary (Users) Uploads a new flavor
-         * @param {string} id 
+         * @param {string} siteId 
          * @param {CreateFlavor} createFlavor 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        addFlavor(id: string, createFlavor: CreateFlavor, options?: any): AxiosPromise<Flavor> {
-            return localVarFp.addFlavor(id, createFlavor, options).then((request) => request(axios, basePath));
+        addFlavor(siteId: string, createFlavor: CreateFlavor, options?: any): AxiosPromise<Flavor> {
+            return localVarFp.addFlavor(siteId, createFlavor, options).then((request) => request(axios, basePath));
         },
         /**
          * Use this method to approve an specific site submitted by an user. It is a custom method, as side effect, it removes the submit report associated as it is no longer needed.
          * @summary (Admins) Approves a site to include it on default list methods
-         * @param {string} id 
+         * @param {string} siteId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        approveSite(id: string, options?: any): AxiosPromise<void> {
-            return localVarFp.approveSite(id, options).then((request) => request(axios, basePath));
+        approveSite(siteId: string, options?: any): AxiosPromise<void> {
+            return localVarFp.approveSite(siteId, options).then((request) => request(axios, basePath));
         },
         /**
          * Use this method to create a new site in the database so it can be accessed by the application users. The method returns the complete created site (if succeeds).
@@ -4436,27 +4436,27 @@ export const SitesApiFactory = function (configuration?: Configuration, basePath
         /**
          * Use this method to delete a specific site from the database.
          * @summary (Admins) Deletes an existing site
-         * @param {string} id 
+         * @param {string} siteId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        deleteSite(id: string, options?: any): AxiosPromise<void> {
-            return localVarFp.deleteSite(id, options).then((request) => request(axios, basePath));
+        deleteSite(siteId: string, options?: any): AxiosPromise<void> {
+            return localVarFp.deleteSite(siteId, options).then((request) => request(axios, basePath));
         },
         /**
          * Use this method to retrieve a specific site from the database.
          * @summary (Public) Retrieves site details
-         * @param {string} id 
+         * @param {string} siteId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getSite(id: string, options?: any): AxiosPromise<Site> {
-            return localVarFp.getSite(id, options).then((request) => request(axios, basePath));
+        getSite(siteId: string, options?: any): AxiosPromise<Site> {
+            return localVarFp.getSite(siteId, options).then((request) => request(axios, basePath));
         },
         /**
          * Use this method to get a list of flavors filtered according to your requirements. The response returns a pagination object with the filtered flavors (if succeeds).
          * @summary (Public) Filters and list flavors
-         * @param {string} id 
+         * @param {string} siteId 
          * @param {'on_review' | 'approved'} [status] Resource current state
          * @param {string} [uploadBefore] Results with upload before date (ISO8601)
          * @param {string} [uploadAfter] Results with upload after date (ISO8601)
@@ -4467,8 +4467,8 @@ export const SitesApiFactory = function (configuration?: Configuration, basePath
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        listFlavors(id: string, status?: 'on_review' | 'approved', uploadBefore?: string, uploadAfter?: string, perPage?: number, page?: number, name?: string, sortBy?: string, options?: any): AxiosPromise<Flavors> {
-            return localVarFp.listFlavors(id, status, uploadBefore, uploadAfter, perPage, page, name, sortBy, options).then((request) => request(axios, basePath));
+        listFlavors(siteId: string, status?: 'on_review' | 'approved', uploadBefore?: string, uploadAfter?: string, perPage?: number, page?: number, name?: string, sortBy?: string, options?: any): AxiosPromise<Flavors> {
+            return localVarFp.listFlavors(siteId, status, uploadBefore, uploadAfter, perPage, page, name, sortBy, options).then((request) => request(axios, basePath));
         },
         /**
          * Use this method to get a list of sites filtered according to your requirements. The response returns a pagination object with the filtered sites (if succeeds).
@@ -4490,17 +4490,17 @@ export const SitesApiFactory = function (configuration?: Configuration, basePath
         /**
          * Use this method instead of DELETE as it raises 422 in case the resource was already approved.  Use this method to reject an specific site submitted by an user. It is a custom method, as side effect, it removes the submit report associated as it is no longer needed.
          * @summary (Admins) Rejects a site to safe delete it.
-         * @param {string} id 
+         * @param {string} siteId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        rejectSite(id: string, options?: any): AxiosPromise<void> {
-            return localVarFp.rejectSite(id, options).then((request) => request(axios, basePath));
+        rejectSite(siteId: string, options?: any): AxiosPromise<void> {
+            return localVarFp.rejectSite(siteId, options).then((request) => request(axios, basePath));
         },
         /**
          * Use this method to get a list of flavors based on a general search of terms. For example, calling this method with terms=K&terms=T returns all flavors with \'K\' and \'T\' on the \'name\', or \'description\' fields. The response returns a pagination object with the filtered flavors (if succeeds).
          * @summary (Public) Filters and list flavors
-         * @param {string} id 
+         * @param {string} siteId 
          * @param {Array<string>} [terms] List of terms (string subsets)
          * @param {string} [sortBy] Order to return the results (coma separated)
          * @param {'on_review' | 'approved'} [status] Resource current state
@@ -4511,8 +4511,8 @@ export const SitesApiFactory = function (configuration?: Configuration, basePath
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        searchFlavor(id: string, terms?: Array<string>, sortBy?: string, status?: 'on_review' | 'approved', uploadBefore?: string, uploadAfter?: string, perPage?: number, page?: number, options?: any): AxiosPromise<Flavors> {
-            return localVarFp.searchFlavor(id, terms, sortBy, status, uploadBefore, uploadAfter, perPage, page, options).then((request) => request(axios, basePath));
+        searchFlavor(siteId: string, terms?: Array<string>, sortBy?: string, status?: 'on_review' | 'approved', uploadBefore?: string, uploadAfter?: string, perPage?: number, page?: number, options?: any): AxiosPromise<Flavors> {
+            return localVarFp.searchFlavor(siteId, terms, sortBy, status, uploadBefore, uploadAfter, perPage, page, options).then((request) => request(axios, basePath));
         },
         /**
          * Use this method to get a list of sites based on a general search of terms. For example, calling this method with terms=K&terms=T returns all sites with \'K\' and \'T\' on the \'name\', \'address\', or \'description\' fields. The response returns a pagination object with the filtered sites (if succeeds).
@@ -4533,13 +4533,13 @@ export const SitesApiFactory = function (configuration?: Configuration, basePath
         /**
          * Use this method to update a specific site from the database.
          * @summary (Admins) Updates an existing site
-         * @param {string} id 
+         * @param {string} siteId 
          * @param {Site} site 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        updateSite(id: string, site: Site, options?: any): AxiosPromise<void> {
-            return localVarFp.updateSite(id, site, options).then((request) => request(axios, basePath));
+        updateSite(siteId: string, site: Site, options?: any): AxiosPromise<void> {
+            return localVarFp.updateSite(siteId, site, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -4554,26 +4554,26 @@ export class SitesApi extends BaseAPI {
     /**
      * Use this method to create a new flavors in the database so it can be accessed by the application users. The method returns the complete created flavor (if succeeds).
      * @summary (Users) Uploads a new flavor
-     * @param {string} id 
+     * @param {string} siteId 
      * @param {CreateFlavor} createFlavor 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof SitesApi
      */
-    public addFlavor(id: string, createFlavor: CreateFlavor, options?: AxiosRequestConfig) {
-        return SitesApiFp(this.configuration).addFlavor(id, createFlavor, options).then((request) => request(this.axios, this.basePath));
+    public addFlavor(siteId: string, createFlavor: CreateFlavor, options?: AxiosRequestConfig) {
+        return SitesApiFp(this.configuration).addFlavor(siteId, createFlavor, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * Use this method to approve an specific site submitted by an user. It is a custom method, as side effect, it removes the submit report associated as it is no longer needed.
      * @summary (Admins) Approves a site to include it on default list methods
-     * @param {string} id 
+     * @param {string} siteId 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof SitesApi
      */
-    public approveSite(id: string, options?: AxiosRequestConfig) {
-        return SitesApiFp(this.configuration).approveSite(id, options).then((request) => request(this.axios, this.basePath));
+    public approveSite(siteId: string, options?: AxiosRequestConfig) {
+        return SitesApiFp(this.configuration).approveSite(siteId, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -4591,31 +4591,31 @@ export class SitesApi extends BaseAPI {
     /**
      * Use this method to delete a specific site from the database.
      * @summary (Admins) Deletes an existing site
-     * @param {string} id 
+     * @param {string} siteId 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof SitesApi
      */
-    public deleteSite(id: string, options?: AxiosRequestConfig) {
-        return SitesApiFp(this.configuration).deleteSite(id, options).then((request) => request(this.axios, this.basePath));
+    public deleteSite(siteId: string, options?: AxiosRequestConfig) {
+        return SitesApiFp(this.configuration).deleteSite(siteId, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * Use this method to retrieve a specific site from the database.
      * @summary (Public) Retrieves site details
-     * @param {string} id 
+     * @param {string} siteId 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof SitesApi
      */
-    public getSite(id: string, options?: AxiosRequestConfig) {
-        return SitesApiFp(this.configuration).getSite(id, options).then((request) => request(this.axios, this.basePath));
+    public getSite(siteId: string, options?: AxiosRequestConfig) {
+        return SitesApiFp(this.configuration).getSite(siteId, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * Use this method to get a list of flavors filtered according to your requirements. The response returns a pagination object with the filtered flavors (if succeeds).
      * @summary (Public) Filters and list flavors
-     * @param {string} id 
+     * @param {string} siteId 
      * @param {'on_review' | 'approved'} [status] Resource current state
      * @param {string} [uploadBefore] Results with upload before date (ISO8601)
      * @param {string} [uploadAfter] Results with upload after date (ISO8601)
@@ -4627,8 +4627,8 @@ export class SitesApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof SitesApi
      */
-    public listFlavors(id: string, status?: 'on_review' | 'approved', uploadBefore?: string, uploadAfter?: string, perPage?: number, page?: number, name?: string, sortBy?: string, options?: AxiosRequestConfig) {
-        return SitesApiFp(this.configuration).listFlavors(id, status, uploadBefore, uploadAfter, perPage, page, name, sortBy, options).then((request) => request(this.axios, this.basePath));
+    public listFlavors(siteId: string, status?: 'on_review' | 'approved', uploadBefore?: string, uploadAfter?: string, perPage?: number, page?: number, name?: string, sortBy?: string, options?: AxiosRequestConfig) {
+        return SitesApiFp(this.configuration).listFlavors(siteId, status, uploadBefore, uploadAfter, perPage, page, name, sortBy, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -4653,19 +4653,19 @@ export class SitesApi extends BaseAPI {
     /**
      * Use this method instead of DELETE as it raises 422 in case the resource was already approved.  Use this method to reject an specific site submitted by an user. It is a custom method, as side effect, it removes the submit report associated as it is no longer needed.
      * @summary (Admins) Rejects a site to safe delete it.
-     * @param {string} id 
+     * @param {string} siteId 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof SitesApi
      */
-    public rejectSite(id: string, options?: AxiosRequestConfig) {
-        return SitesApiFp(this.configuration).rejectSite(id, options).then((request) => request(this.axios, this.basePath));
+    public rejectSite(siteId: string, options?: AxiosRequestConfig) {
+        return SitesApiFp(this.configuration).rejectSite(siteId, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * Use this method to get a list of flavors based on a general search of terms. For example, calling this method with terms=K&terms=T returns all flavors with \'K\' and \'T\' on the \'name\', or \'description\' fields. The response returns a pagination object with the filtered flavors (if succeeds).
      * @summary (Public) Filters and list flavors
-     * @param {string} id 
+     * @param {string} siteId 
      * @param {Array<string>} [terms] List of terms (string subsets)
      * @param {string} [sortBy] Order to return the results (coma separated)
      * @param {'on_review' | 'approved'} [status] Resource current state
@@ -4677,8 +4677,8 @@ export class SitesApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof SitesApi
      */
-    public searchFlavor(id: string, terms?: Array<string>, sortBy?: string, status?: 'on_review' | 'approved', uploadBefore?: string, uploadAfter?: string, perPage?: number, page?: number, options?: AxiosRequestConfig) {
-        return SitesApiFp(this.configuration).searchFlavor(id, terms, sortBy, status, uploadBefore, uploadAfter, perPage, page, options).then((request) => request(this.axios, this.basePath));
+    public searchFlavor(siteId: string, terms?: Array<string>, sortBy?: string, status?: 'on_review' | 'approved', uploadBefore?: string, uploadAfter?: string, perPage?: number, page?: number, options?: AxiosRequestConfig) {
+        return SitesApiFp(this.configuration).searchFlavor(siteId, terms, sortBy, status, uploadBefore, uploadAfter, perPage, page, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -4702,14 +4702,14 @@ export class SitesApi extends BaseAPI {
     /**
      * Use this method to update a specific site from the database.
      * @summary (Admins) Updates an existing site
-     * @param {string} id 
+     * @param {string} siteId 
      * @param {Site} site 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof SitesApi
      */
-    public updateSite(id: string, site: Site, options?: AxiosRequestConfig) {
-        return SitesApiFp(this.configuration).updateSite(id, site, options).then((request) => request(this.axios, this.basePath));
+    public updateSite(siteId: string, site: Site, options?: AxiosRequestConfig) {
+        return SitesApiFp(this.configuration).updateSite(siteId, site, options).then((request) => request(this.axios, this.basePath));
     }
 }
 
@@ -4763,15 +4763,15 @@ export const TagsApiAxiosParamCreator = function (configuration?: Configuration)
         /**
          * Use this method to delete a specific tag from the database.
          * @summary (Admins) Deletes an existing tag
-         * @param {string} id 
+         * @param {string} tagId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        deleteTag: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'id' is not null or undefined
-            assertParamExists('deleteTag', 'id', id)
-            const localVarPath = `/tags/{id}`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+        deleteTag: async (tagId: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'tagId' is not null or undefined
+            assertParamExists('deleteTag', 'tagId', tagId)
+            const localVarPath = `/tags/{tag_id}`
+                .replace(`{${"tag_id"}}`, encodeURIComponent(String(tagId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -4801,15 +4801,15 @@ export const TagsApiAxiosParamCreator = function (configuration?: Configuration)
         /**
          * Use this method to retrieve a specific tag from the database.
          * @summary (Public) Retrieves tag details
-         * @param {string} id 
+         * @param {string} tagId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getTag: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'id' is not null or undefined
-            assertParamExists('getTag', 'id', id)
-            const localVarPath = `/tags/{id}`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+        getTag: async (tagId: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'tagId' is not null or undefined
+            assertParamExists('getTag', 'tagId', tagId)
+            const localVarPath = `/tags/{tag_id}`
+                .replace(`{${"tag_id"}}`, encodeURIComponent(String(tagId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -4947,18 +4947,18 @@ export const TagsApiAxiosParamCreator = function (configuration?: Configuration)
         /**
          * Use this method to update a specific tag from the database.
          * @summary (Admins) Updates an existing tag
-         * @param {string} id 
+         * @param {string} tagId 
          * @param {Tag} tag 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        updateTag: async (id: string, tag: Tag, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'id' is not null or undefined
-            assertParamExists('updateTag', 'id', id)
+        updateTag: async (tagId: string, tag: Tag, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'tagId' is not null or undefined
+            assertParamExists('updateTag', 'tagId', tagId)
             // verify required parameter 'tag' is not null or undefined
             assertParamExists('updateTag', 'tag', tag)
-            const localVarPath = `/tags/{id}`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            const localVarPath = `/tags/{tag_id}`
+                .replace(`{${"tag_id"}}`, encodeURIComponent(String(tagId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -5012,23 +5012,23 @@ export const TagsApiFp = function(configuration?: Configuration) {
         /**
          * Use this method to delete a specific tag from the database.
          * @summary (Admins) Deletes an existing tag
-         * @param {string} id 
+         * @param {string} tagId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async deleteTag(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.deleteTag(id, options);
+        async deleteTag(tagId: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.deleteTag(tagId, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * Use this method to retrieve a specific tag from the database.
          * @summary (Public) Retrieves tag details
-         * @param {string} id 
+         * @param {string} tagId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getTag(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Tag>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getTag(id, options);
+        async getTag(tagId: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Tag>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getTag(tagId, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -5062,13 +5062,13 @@ export const TagsApiFp = function(configuration?: Configuration) {
         /**
          * Use this method to update a specific tag from the database.
          * @summary (Admins) Updates an existing tag
-         * @param {string} id 
+         * @param {string} tagId 
          * @param {Tag} tag 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async updateTag(id: string, tag: Tag, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.updateTag(id, tag, options);
+        async updateTag(tagId: string, tag: Tag, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.updateTag(tagId, tag, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
     }
@@ -5094,22 +5094,22 @@ export const TagsApiFactory = function (configuration?: Configuration, basePath?
         /**
          * Use this method to delete a specific tag from the database.
          * @summary (Admins) Deletes an existing tag
-         * @param {string} id 
+         * @param {string} tagId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        deleteTag(id: string, options?: any): AxiosPromise<void> {
-            return localVarFp.deleteTag(id, options).then((request) => request(axios, basePath));
+        deleteTag(tagId: string, options?: any): AxiosPromise<void> {
+            return localVarFp.deleteTag(tagId, options).then((request) => request(axios, basePath));
         },
         /**
          * Use this method to retrieve a specific tag from the database.
          * @summary (Public) Retrieves tag details
-         * @param {string} id 
+         * @param {string} tagId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getTag(id: string, options?: any): AxiosPromise<Tag> {
-            return localVarFp.getTag(id, options).then((request) => request(axios, basePath));
+        getTag(tagId: string, options?: any): AxiosPromise<Tag> {
+            return localVarFp.getTag(tagId, options).then((request) => request(axios, basePath));
         },
         /**
          * Use this method to get a list of tags filtered according to your requirements. The response returns a pagination object with the filtered tags (if succeeds).
@@ -5140,13 +5140,13 @@ export const TagsApiFactory = function (configuration?: Configuration, basePath?
         /**
          * Use this method to update a specific tag from the database.
          * @summary (Admins) Updates an existing tag
-         * @param {string} id 
+         * @param {string} tagId 
          * @param {Tag} tag 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        updateTag(id: string, tag: Tag, options?: any): AxiosPromise<void> {
-            return localVarFp.updateTag(id, tag, options).then((request) => request(axios, basePath));
+        updateTag(tagId: string, tag: Tag, options?: any): AxiosPromise<void> {
+            return localVarFp.updateTag(tagId, tag, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -5173,25 +5173,25 @@ export class TagsApi extends BaseAPI {
     /**
      * Use this method to delete a specific tag from the database.
      * @summary (Admins) Deletes an existing tag
-     * @param {string} id 
+     * @param {string} tagId 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof TagsApi
      */
-    public deleteTag(id: string, options?: AxiosRequestConfig) {
-        return TagsApiFp(this.configuration).deleteTag(id, options).then((request) => request(this.axios, this.basePath));
+    public deleteTag(tagId: string, options?: AxiosRequestConfig) {
+        return TagsApiFp(this.configuration).deleteTag(tagId, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * Use this method to retrieve a specific tag from the database.
      * @summary (Public) Retrieves tag details
-     * @param {string} id 
+     * @param {string} tagId 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof TagsApi
      */
-    public getTag(id: string, options?: AxiosRequestConfig) {
-        return TagsApiFp(this.configuration).getTag(id, options).then((request) => request(this.axios, this.basePath));
+    public getTag(tagId: string, options?: AxiosRequestConfig) {
+        return TagsApiFp(this.configuration).getTag(tagId, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -5227,14 +5227,14 @@ export class TagsApi extends BaseAPI {
     /**
      * Use this method to update a specific tag from the database.
      * @summary (Admins) Updates an existing tag
-     * @param {string} id 
+     * @param {string} tagId 
      * @param {Tag} tag 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof TagsApi
      */
-    public updateTag(id: string, tag: Tag, options?: AxiosRequestConfig) {
-        return TagsApiFp(this.configuration).updateTag(id, tag, options).then((request) => request(this.axios, this.basePath));
+    public updateTag(tagId: string, tag: Tag, options?: AxiosRequestConfig) {
+        return TagsApiFp(this.configuration).updateTag(tagId, tag, options).then((request) => request(this.axios, this.basePath));
     }
 }
 
