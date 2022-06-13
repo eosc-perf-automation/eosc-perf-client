@@ -163,10 +163,10 @@ export interface Claim {
     'resource_id': string;
     /**
      * 
-     * @type {User}
+     * @type {SubmitUploader}
      * @memberof Claim
      */
-    'uploader': User;
+    'uploader': SubmitUploader;
 }
 
 export const ClaimResourceTypeEnum = {
@@ -755,10 +755,10 @@ export interface Submit {
     'resource_id': string;
     /**
      * 
-     * @type {User}
+     * @type {SubmitUploader}
      * @memberof Submit
      */
-    'uploader': User;
+    'uploader': SubmitUploader;
 }
 
 export const SubmitResourceTypeEnum = {
@@ -770,6 +770,37 @@ export const SubmitResourceTypeEnum = {
 
 export type SubmitResourceTypeEnum = typeof SubmitResourceTypeEnum[keyof typeof SubmitResourceTypeEnum];
 
+/**
+ * 
+ * @export
+ * @interface SubmitUploader
+ */
+export interface SubmitUploader {
+    /**
+     * String containing an OIDC subject
+     * @type {string}
+     * @memberof SubmitUploader
+     */
+    'sub': string;
+    /**
+     * String containing an OIDC issuer
+     * @type {string}
+     * @memberof SubmitUploader
+     */
+    'iss': string;
+    /**
+     * Email of user collected by the OIDC token
+     * @type {string}
+     * @memberof SubmitUploader
+     */
+    'email': string;
+    /**
+     * Time when the user was registered
+     * @type {string}
+     * @memberof SubmitUploader
+     */
+    'registration_datetime': string;
+}
 /**
  * 
  * @export
@@ -2766,12 +2797,12 @@ export const ResultsApiAxiosParamCreator = function (configuration?: Configurati
          * @param {string} executionDatetime START execution datetime and timezone of the result
          * @param {string} benchmarkId UUID benchmark unique identification
          * @param {string} flavorId UUID flavor unique identification
-         * @param {{ [key: string]: object; }} requestBody 
+         * @param {{ [key: string]: any; }} requestBody 
          * @param {Array<string>} [tagsIds] UUID tags unique identifications
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createResult: async (executionDatetime: string, benchmarkId: string, flavorId: string, requestBody: { [key: string]: object; }, tagsIds?: Array<string>, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        createResult: async (executionDatetime: string, benchmarkId: string, flavorId: string, requestBody: { [key: string]: any; }, tagsIds?: Array<string>, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'executionDatetime' is not null or undefined
             assertParamExists('createResult', 'executionDatetime', executionDatetime)
             // verify required parameter 'benchmarkId' is not null or undefined
@@ -3256,12 +3287,12 @@ export const ResultsApiFp = function(configuration?: Configuration) {
          * @param {string} executionDatetime START execution datetime and timezone of the result
          * @param {string} benchmarkId UUID benchmark unique identification
          * @param {string} flavorId UUID flavor unique identification
-         * @param {{ [key: string]: object; }} requestBody 
+         * @param {{ [key: string]: any; }} requestBody 
          * @param {Array<string>} [tagsIds] UUID tags unique identifications
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async createResult(executionDatetime: string, benchmarkId: string, flavorId: string, requestBody: { [key: string]: object; }, tagsIds?: Array<string>, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Result>> {
+        async createResult(executionDatetime: string, benchmarkId: string, flavorId: string, requestBody: { [key: string]: any; }, tagsIds?: Array<string>, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Result>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.createResult(executionDatetime, benchmarkId, flavorId, requestBody, tagsIds, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
@@ -3392,12 +3423,12 @@ export const ResultsApiFactory = function (configuration?: Configuration, basePa
          * @param {string} executionDatetime START execution datetime and timezone of the result
          * @param {string} benchmarkId UUID benchmark unique identification
          * @param {string} flavorId UUID flavor unique identification
-         * @param {{ [key: string]: object; }} requestBody 
+         * @param {{ [key: string]: any; }} requestBody 
          * @param {Array<string>} [tagsIds] UUID tags unique identifications
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createResult(executionDatetime: string, benchmarkId: string, flavorId: string, requestBody: { [key: string]: object; }, tagsIds?: Array<string>, options?: any): AxiosPromise<Result> {
+        createResult(executionDatetime: string, benchmarkId: string, flavorId: string, requestBody: { [key: string]: any; }, tagsIds?: Array<string>, options?: any): AxiosPromise<Result> {
             return localVarFp.createResult(executionDatetime, benchmarkId, flavorId, requestBody, tagsIds, options).then((request) => request(axios, basePath));
         },
         /**
@@ -3522,13 +3553,13 @@ export class ResultsApi extends BaseAPI {
      * @param {string} executionDatetime START execution datetime and timezone of the result
      * @param {string} benchmarkId UUID benchmark unique identification
      * @param {string} flavorId UUID flavor unique identification
-     * @param {{ [key: string]: object; }} requestBody 
+     * @param {{ [key: string]: any; }} requestBody 
      * @param {Array<string>} [tagsIds] UUID tags unique identifications
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ResultsApi
      */
-    public createResult(executionDatetime: string, benchmarkId: string, flavorId: string, requestBody: { [key: string]: object; }, tagsIds?: Array<string>, options?: AxiosRequestConfig) {
+    public createResult(executionDatetime: string, benchmarkId: string, flavorId: string, requestBody: { [key: string]: any; }, tagsIds?: Array<string>, options?: AxiosRequestConfig) {
         return ResultsApiFp(this.configuration).createResult(executionDatetime, benchmarkId, flavorId, requestBody, tagsIds, options).then((request) => request(this.axios, this.basePath));
     }
 
