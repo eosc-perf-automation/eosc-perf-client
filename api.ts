@@ -442,6 +442,12 @@ export interface Flavors {
  */
 export interface ModelError {
     /**
+     * Error message
+     * @type {string}
+     * @memberof ModelError
+     */
+    'message'?: string;
+    /**
      * Errors
      * @type {object}
      * @memberof ModelError
@@ -453,12 +459,6 @@ export interface ModelError {
      * @memberof ModelError
      */
     'status'?: string;
-    /**
-     * Error message
-     * @type {string}
-     * @memberof ModelError
-     */
-    'message'?: string;
     /**
      * Error code
      * @type {number}
