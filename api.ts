@@ -448,17 +448,17 @@ export interface ModelError {
      */
     'message'?: string;
     /**
-     * Errors
-     * @type {object}
-     * @memberof ModelError
-     */
-    'errors'?: object;
-    /**
      * Error name
      * @type {string}
      * @memberof ModelError
      */
     'status'?: string;
+    /**
+     * Errors
+     * @type {object}
+     * @memberof ModelError
+     */
+    'errors'?: object;
     /**
      * Error code
      * @type {number}
